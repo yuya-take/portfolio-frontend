@@ -1,165 +1,166 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { Github, Linkedin, Mail, Clock } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { toast } from "@/hooks/use-toast"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/hooks/use-toast";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Clock, Github, Linkedin } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const skillColors = {
-  language: 'bg-indigo-700',
-  framework: 'bg-purple-700',
-  library: 'bg-pink-700',
-  other: 'bg-gray-700'
+  language: "bg-indigo-700",
+  framework: "bg-purple-700",
+  library: "bg-pink-700",
+  other: "bg-gray-700",
 };
 
 const skillCategories = [
-  { 
-    name: 'フロントエンド', 
+  {
+    name: "フロントエンド",
     skills: [
-      { name: 'TypeScript', type: 'language' },
-      { name: 'React', type: 'library' },
-      { name: 'Next.js', type: 'framework' },
-      { name: 'Vue.js', type: 'framework' },
-      { name: 'Nuxt', type: 'framework' },
-      { name: 'Svelte', type: 'framework' },
-      { name: 'SvelteKit', type: 'framework' },
-      { name: 'Tauri', type: 'framework' }
-    ]
+      { name: "TypeScript", type: "language" },
+      { name: "React", type: "library" },
+      { name: "Next.js", type: "framework" },
+      { name: "Vue.js", type: "framework" },
+      { name: "Nuxt", type: "framework" },
+      { name: "Svelte", type: "framework" },
+      { name: "SvelteKit", type: "framework" },
+      { name: "Tauri", type: "framework" },
+    ],
   },
-  { 
-    name: 'バックエンド', 
+  {
+    name: "バックエンド",
     skills: [
-      { name: 'Rust', type: 'language' },
-      { name: 'Python', type: 'language' },
-      { name: 'Axum', type: 'framework' },
-      { name: 'FastAPI', type: 'framework' },
-      { name: 'Django', type: 'framework' },
-      { name: 'REST API', type: 'other' }
-    ]
+      { name: "Rust", type: "language" },
+      { name: "Python", type: "language" },
+      { name: "Axum", type: "framework" },
+      { name: "FastAPI", type: "framework" },
+      { name: "Django", type: "framework" },
+      { name: "REST API", type: "other" },
+    ],
   },
-  { 
-    name: 'データベース', 
+  {
+    name: "データベース",
     skills: [
-      { name: 'MySQL', type: 'other' },
-      { name: 'PostgreSQL', type: 'other' },
-      { name: 'DynamoDB', type: 'other' }
-    ]
+      { name: "MySQL", type: "other" },
+      { name: "PostgreSQL", type: "other" },
+      { name: "DynamoDB", type: "other" },
+    ],
   },
-  { 
-    name: 'DevOps', 
+  {
+    name: "DevOps",
     skills: [
-      { name: 'Docker', type: 'other' },
-      { name: 'CI/CD', type: 'other' },
-      { name: 'AWS', type: 'other' },
-      { name: 'CloudFormation', type: 'other' }
-    ]
+      { name: "Docker", type: "other" },
+      { name: "CI/CD", type: "other" },
+      { name: "AWS", type: "other" },
+      { name: "CloudFormation", type: "other" },
+    ],
   },
-  { 
-    name: 'データサイエンス・機械学習', 
+  {
+    name: "データサイエンス・機械学習",
     skills: [
-      { name: 'Pandas', type: 'library' },
-      { name: 'scikit-learn', type: 'library' },
-      { name: 'TensorFlow', type: 'library' },
-      { name: 'PyTorch', type: 'library' }
-    ]
+      { name: "Pandas", type: "library" },
+      { name: "scikit-learn", type: "library" },
+      { name: "TensorFlow", type: "library" },
+      { name: "PyTorch", type: "library" },
+    ],
   },
-  { 
-    name: 'その他', 
+  {
+    name: "その他",
     skills: [
-      { name: 'Go', type: 'language' },
-      { name: 'C++', type: 'language' }
-    ]
+      { name: "Go", type: "language" },
+      { name: "C++", type: "language" },
+    ],
   },
-]
+];
 
 export default function Portfolio() {
-  const [activeSection, setActiveSection] = useState('home')
-  const { scrollYProgress } = useScroll()
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
+  const [activeSection, setActiveSection] = useState("home");
+  const { scrollYProgress } = useScroll();
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   const [formData, setFormData] = useState({
-    title: '',
-    email: '',
-    content: ''
-  })
+    title: "",
+    email: "",
+    content: "",
+  });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const response = await fetch('/api/send-email', {
-        method: 'POST',
+      const response = await fetch("/api/send-email", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
-      })
+      });
 
       if (response.ok) {
         toast({
           title: "メッセージ送信完了",
           description: "お問い合わせありがとうございます。折り返しご連絡いたします。",
-        })
-        setFormData({ title: '', email: '', content: '' })
+        });
+        setFormData({ title: "", email: "", content: "" });
       } else {
-        throw new Error('Failed to send email')
+        throw new Error("Failed to send email");
       }
     } catch (error) {
+      console.error("Failed to send email:", error);
       toast({
         title: "エラー",
         description: "メッセージの送信に失敗しました。後ほど再度お試しください。",
         variant: "destructive",
-      })
+      });
     }
-  }
+  };
 
   const scrollTo = (id: string) => {
-    const element = document.getElementById(id)
-    element?.scrollIntoView({ behavior: 'smooth' })
-    setActiveSection(id)
-  }
+    const element = document.getElementById(id);
+    element?.scrollIntoView({ behavior: "smooth" });
+    setActiveSection(id);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['home', 'about me', 'projects', 'skills', 'contact']
-      const current = sections.find(section => {
-        const element = document.getElementById(section)
+      const sections = ["home", "about me", "projects", "skills", "contact"];
+      const current = sections.find((section) => {
+        const element = document.getElementById(section);
         if (element) {
-          const rect = element.getBoundingClientRect()
-          return rect.top <= 100 && rect.bottom >= 100
+          const rect = element.getBoundingClientRect();
+          return rect.top <= 100 && rect.bottom >= 100;
         }
-        return false
-      })
+        return false;
+      });
       if (current) {
-        setActiveSection(current)
+        setActiveSection(current);
       }
-    }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900 text-gray-100">
       <nav className="fixed top-0 left-0 right-0 z-50 bg-gray-900 bg-opacity-90 backdrop-blur-sm shadow-md">
         <ul className="flex justify-center space-x-6 py-4">
-          {['home', 'about me', 'projects', 'skills', 'contact'].map((section) => (
+          {["home", "about me", "projects", "skills", "contact"].map((section) => (
             <li key={section}>
               <Button
                 variant="ghost"
                 onClick={() => scrollTo(section)}
                 className={`text-sm uppercase tracking-wider transition-colors duration-300 ${
-                  activeSection === section ? 'text-purple-400 font-bold' : 'text-gray-400 hover:text-purple-400'
+                  activeSection === section ? "text-purple-400 font-bold" : "text-gray-400 hover:text-purple-400"
                 }`}
               >
                 {section}
@@ -170,7 +171,7 @@ export default function Portfolio() {
       </nav>
 
       <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden pt-16">
-        <motion.div 
+        <motion.div
           className="text-center z-10"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -189,31 +190,33 @@ export default function Portfolio() {
           <h1 className="text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
             Yuya Takemasa
           </h1>
-          <p className="text-2xl text-gray-300 mb-8">
-            Full Stack Developer
-          </p>
-          <Button onClick={() => scrollTo('about me')} className="bg-purple-600 hover:bg-purple-700 text-white">
+          <p className="text-2xl text-gray-300 mb-8">Full Stack Developer</p>
+          <Button onClick={() => scrollTo("about me")} className="bg-purple-600 hover:bg-purple-700 text-white">
             詳しく見る
           </Button>
         </motion.div>
-        <motion.div 
-          className="absolute inset-0 z-0"
-          style={{ opacity }}
-        >
-          <div className="absolute inset-0 bg-[url('/placeholder.svg?height=1080&width=1920')] bg-cover bg-center opacity-10"></div>
+        <motion.div className="absolute inset-0 z-0" style={{ opacity }}>
+          <div className="absolute inset-0 bg-[url('/placeholder.svg?height=1080&width=1920')] bg-cover bg-center opacity-10"/ >
         </motion.div>
       </section>
 
       <section id="about me" className="py-20 px-4 flex items-center justify-center bg-gray-900 bg-opacity-60">
         <Card className="w-full max-w-3xl bg-gray-800 bg-opacity-80 backdrop-blur-md border-none shadow-xl">
           <CardHeader>
-            <CardTitle className="text-4xl font-bold mb-2 text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">About Me</CardTitle>
+            <CardTitle className="text-4xl font-bold mb-2 text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+              About Me
+            </CardTitle>
           </CardHeader>
           <CardContent className="text-lg text-gray-300">
             <div className="mb-6">
               <h3 className="text-2xl font-semibold mb-2 text-purple-400">Yuya.T</h3>
-              <p className="mb-2"><span className="font-semibold">出身地:</span> 千葉県</p>
-              <p className="mb-2"><span className="font-semibold">最終学歴:</span> 千葉大学大学院 融合理工学府 先進理化学専攻 物理学コース 修士課程修了</p>
+              <p className="mb-2">
+                <span className="font-semibold">出身地:</span> 千葉県
+              </p>
+              <p className="mb-2">
+                <span className="font-semibold">最終学歴:</span> 千葉大学大学院 融合理工学府 先進理化学専攻 物理学コース
+                修士課程修了
+              </p>
             </div>
             <p className="mb-4">
               大学時代には、Pythonを使って実験装置を制御するプログラムを開発し、
@@ -238,13 +241,11 @@ export default function Portfolio() {
       </section>
 
       <section id="projects" className="py-20 px-4 bg-gray-900 bg-opacity-60">
-        <h2 className="text-4xl font-bold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">Projects</h2>
+        <h2 className="text-4xl font-bold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+          Projects
+        </h2>
         <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
+          <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <Card className="bg-gray-800 bg-opacity-80 backdrop-blur-md border-none shadow-xl overflow-hidden">
               <CardHeader>
                 <CardTitle className="text-3xl font-bold text-purple-400 text-center">Coming Soon</CardTitle>
@@ -261,11 +262,13 @@ export default function Portfolio() {
       </section>
 
       <section id="skills" className="py-20 px-4 bg-gray-900 bg-opacity-60 flex flex-col justify-center">
-        <h2 className="text-4xl font-bold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">Skills</h2>
+        <h2 className="text-4xl font-bold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+          Skills
+        </h2>
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-          {skillCategories.map((category, index) => (
-            <motion.div
-              key={index}
+          {skillCategories.map((category) => (
+              <motion.div
+              key={category.name}
               initial={{ opacity: 0, scale: 0.5 }}
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
@@ -277,9 +280,9 @@ export default function Portfolio() {
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
                     {category.skills.map((skill) => (
-                      <Badge 
-                        key={skill.name} 
-                        variant="secondary" 
+                      <Badge
+                        key={skill.name}
+                        variant="secondary"
                         className={`${skillColors[skill.type as keyof typeof skillColors]} text-gray-100`}
                       >
                         {skill.name}
@@ -296,12 +299,16 @@ export default function Portfolio() {
       <section id="contact" className="py-10 px-4 flex items-center justify-center bg-gray-900 bg-opacity-60">
         <Card className="w-full max-w-md bg-gray-800 bg-opacity-80 backdrop-blur-md border-none shadow-xl">
           <CardHeader>
-            <CardTitle className="text-3xl font-bold mb-2 text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">Contact</CardTitle>
+            <CardTitle className="text-3xl font-bold mb-2 text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+              Contact
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <Label htmlFor="title" className="text-gray-200 font-medium">タイトル</Label>
+                <Label htmlFor="title" className="text-gray-200 font-medium">
+                  タイトル
+                </Label>
                 <Input
                   id="title"
                   name="title"
@@ -313,7 +320,9 @@ export default function Portfolio() {
                 />
               </div>
               <div>
-                <Label htmlFor="email" className="text-gray-200 font-medium">メールアドレス</Label>
+                <Label htmlFor="email" className="text-gray-200 font-medium">
+                  メールアドレス
+                </Label>
                 <Input
                   id="email"
                   name="email"
@@ -326,7 +335,9 @@ export default function Portfolio() {
                 />
               </div>
               <div>
-                <Label htmlFor="content" className="text-gray-200 font-medium">内容</Label>
+                <Label htmlFor="content" className="text-gray-200 font-medium">
+                  内容
+                </Label>
                 <Textarea
                   id="content"
                   name="content"
@@ -337,18 +348,32 @@ export default function Portfolio() {
                   placeholder="お問い合わせ内容を入力してください"
                 />
               </div>
-              <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium" disabled>
+              <Button
+                type="submit"
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium"
+                disabled
+              >
                 送信
               </Button>
             </form>
             <div className="flex justify-center space-x-6 mt-6">
-              <Button variant="outline" size="icon" asChild className="text-purple-400 border-purple-400 hover:bg-purple-400 hover:text-gray-900 transition-colors duration-300">
+              <Button
+                variant="outline"
+                size="icon"
+                asChild
+                className="text-purple-400 border-purple-400 hover:bg-purple-400 hover:text-gray-900 transition-colors duration-300"
+              >
                 <a href="https://github.com/yuya-take" target="_blank" rel="noopener noreferrer">
                   <Github className="h-6 w-6" />
                   <span className="sr-only">GitHub</span>
                 </a>
               </Button>
-              <Button variant="outline" size="icon" asChild className="text-purple-400 border-purple-400 hover:bg-purple-400 hover:text-gray-900 transition-colors duration-300">
+              <Button
+                variant="outline"
+                size="icon"
+                asChild
+                className="text-purple-400 border-purple-400 hover:bg-purple-400 hover:text-gray-900 transition-colors duration-300"
+              >
                 <a href="https://linkedin.com/in/yuya-takemasa-456763285" target="_blank" rel="noopener noreferrer">
                   <Linkedin className="h-6 w-6" />
                   <span className="sr-only">LinkedIn</span>
@@ -359,5 +384,5 @@ export default function Portfolio() {
         </Card>
       </section>
     </div>
-  )
+  );
 }

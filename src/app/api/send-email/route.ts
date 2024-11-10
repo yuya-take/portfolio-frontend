@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+import { NextResponse } from "next/server";
+import nodemailer from "nodemailer";
 
 export async function POST(request: Request) {
   try {
@@ -8,8 +8,8 @@ export async function POST(request: Request) {
     // SMTPトランスポーターの作成
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: process.env.SMTP_SECURE === 'true',
+      port: Number.parseInt(process.env.SMTP_PORT || "587"),
+      secure: process.env.SMTP_SECURE === "true",
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
@@ -33,9 +33,9 @@ export async function POST(request: Request) {
     // メールの送信
     await transporter.sendMail(mailOptions);
 
-    return NextResponse.json({ message: 'メールが正常に送信されました' }, { status: 200 });
+    return NextResponse.json({ message: "メールが正常に送信されました" }, { status: 200 });
   } catch (error) {
-    console.error('メール送信エラー:', error);
-    return NextResponse.json({ message: 'メールの送信に失敗しました' }, { status: 500 });
+    console.error("メール送信エラー:", error);
+    return NextResponse.json({ message: "メールの送信に失敗しました" }, { status: 500 });
   }
 }
