@@ -1,101 +1,363 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
+import { useState, useEffect } from 'react'
+import { motion, useScroll, useTransform } from 'framer-motion'
+import { Github, Linkedin, Mail, Clock } from 'lucide-react'
+import { Button } from "@/components/ui/button"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { toast } from "@/hooks/use-toast"
+
+const skillColors = {
+  language: 'bg-indigo-700',
+  framework: 'bg-purple-700',
+  library: 'bg-pink-700',
+  other: 'bg-gray-700'
+};
+
+const skillCategories = [
+  { 
+    name: 'フロントエンド', 
+    skills: [
+      { name: 'TypeScript', type: 'language' },
+      { name: 'React', type: 'library' },
+      { name: 'Next.js', type: 'framework' },
+      { name: 'Vue.js', type: 'framework' },
+      { name: 'Nuxt', type: 'framework' },
+      { name: 'Svelte', type: 'framework' },
+      { name: 'SvelteKit', type: 'framework' },
+      { name: 'Tauri', type: 'framework' }
+    ]
+  },
+  { 
+    name: 'バックエンド', 
+    skills: [
+      { name: 'Rust', type: 'language' },
+      { name: 'Python', type: 'language' },
+      { name: 'Axum', type: 'framework' },
+      { name: 'FastAPI', type: 'framework' },
+      { name: 'Django', type: 'framework' },
+      { name: 'REST API', type: 'other' }
+    ]
+  },
+  { 
+    name: 'データベース', 
+    skills: [
+      { name: 'MySQL', type: 'other' },
+      { name: 'PostgreSQL', type: 'other' },
+      { name: 'DynamoDB', type: 'other' }
+    ]
+  },
+  { 
+    name: 'DevOps', 
+    skills: [
+      { name: 'Docker', type: 'other' },
+      { name: 'CI/CD', type: 'other' },
+      { name: 'AWS', type: 'other' },
+      { name: 'CloudFormation', type: 'other' }
+    ]
+  },
+  { 
+    name: 'データサイエンス・機械学習', 
+    skills: [
+      { name: 'Pandas', type: 'library' },
+      { name: 'scikit-learn', type: 'library' },
+      { name: 'TensorFlow', type: 'library' },
+      { name: 'PyTorch', type: 'library' }
+    ]
+  },
+  { 
+    name: 'その他', 
+    skills: [
+      { name: 'Go', type: 'language' },
+      { name: 'C++', type: 'language' }
+    ]
+  },
+]
+
+export default function Portfolio() {
+  const [activeSection, setActiveSection] = useState('home')
+  const { scrollYProgress } = useScroll()
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
+
+  const [formData, setFormData] = useState({
+    title: '',
+    email: '',
+    content: ''
+  })
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      if (response.ok) {
+        toast({
+          title: "メッセージ送信完了",
+          description: "お問い合わせありがとうございます。折り返しご連絡いたします。",
+        })
+        setFormData({ title: '', email: '', content: '' })
+      } else {
+        throw new Error('Failed to send email')
+      }
+    } catch (error) {
+      toast({
+        title: "エラー",
+        description: "メッセージの送信に失敗しました。後ほど再度お試しください。",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const scrollTo = (id: string) => {
+    const element = document.getElementById(id)
+    element?.scrollIntoView({ behavior: 'smooth' })
+    setActiveSection(id)
+  }
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ['home', 'about me', 'projects', 'skills', 'contact']
+      const current = sections.find(section => {
+        const element = document.getElementById(section)
+        if (element) {
+          const rect = element.getBoundingClientRect()
+          return rect.top <= 100 && rect.bottom >= 100
+        }
+        return false
+      })
+      if (current) {
+        setActiveSection(current)
+      }
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900 text-gray-100">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-gray-900 bg-opacity-90 backdrop-blur-sm shadow-md">
+        <ul className="flex justify-center space-x-6 py-4">
+          {['home', 'about me', 'projects', 'skills', 'contact'].map((section) => (
+            <li key={section}>
+              <Button
+                variant="ghost"
+                onClick={() => scrollTo(section)}
+                className={`text-sm uppercase tracking-wider transition-colors duration-300 ${
+                  activeSection === section ? 'text-purple-400 font-bold' : 'text-gray-400 hover:text-purple-400'
+                }`}
+              >
+                {section}
+              </Button>
+            </li>
+          ))}
+        </ul>
+      </nav>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden pt-16">
+        <motion.div 
+          className="text-center z-10"
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8 }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            <Avatar className="w-40 h-40 mx-auto mb-6 border-4 border-purple-500 shadow-lg">
+              <AvatarImage src="https://github.com/yuya-take.png" alt="Yuya Takemasa" />
+              <AvatarFallback>YT</AvatarFallback>
+            </Avatar>
+          </motion.div>
+          <h1 className="text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+            Yuya Takemasa
+          </h1>
+          <p className="text-2xl text-gray-300 mb-8">
+            Full Stack Developer
+          </p>
+          <Button onClick={() => scrollTo('about me')} className="bg-purple-600 hover:bg-purple-700 text-white">
+            詳しく見る
+          </Button>
+        </motion.div>
+        <motion.div 
+          className="absolute inset-0 z-0"
+          style={{ opacity }}
+        >
+          <div className="absolute inset-0 bg-[url('/placeholder.svg?height=1080&width=1920')] bg-cover bg-center opacity-10"></div>
+        </motion.div>
+      </section>
+
+      <section id="about me" className="py-20 px-4 flex items-center justify-center bg-gray-900 bg-opacity-60">
+        <Card className="w-full max-w-3xl bg-gray-800 bg-opacity-80 backdrop-blur-md border-none shadow-xl">
+          <CardHeader>
+            <CardTitle className="text-4xl font-bold mb-2 text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">About Me</CardTitle>
+          </CardHeader>
+          <CardContent className="text-lg text-gray-300">
+            <div className="mb-6">
+              <h3 className="text-2xl font-semibold mb-2 text-purple-400">Yuya.T</h3>
+              <p className="mb-2"><span className="font-semibold">出身地:</span> 千葉県</p>
+              <p className="mb-2"><span className="font-semibold">最終学歴:</span> 千葉大学大学院 融合理工学府 先進理化学専攻 物理学コース 修士課程修了</p>
+            </div>
+            <p className="mb-4">
+              大学時代には、Pythonを使って実験装置を制御するプログラムを開発し、
+              実験結果の分析やデータ処理を行うほか、必要に応じて回路設計も手がけるなど、
+              ソフトウェアとハードウェアの両面で経験を積んできました。
+              また、C++を用いたシミュレーションにより、実験結果と理想的な値との差を確認し、
+              実験対象となる装置の校正を行うことにも取り組みました。
+            </p>
+            <p className="mb-4">
+              その後、ITエンジニアとしてのキャリアをスタートし、フロントエンド・バックエンド、さらにはインフラまで幅広く対応しています。
+              フロントエンドではReactやNext.jsを活用し、デザインと使いやすさを両立させたインターフェースを作成。
+              バックエンドでは、RustやPythonを使ってスケーラブルなシステムの構築に取り組んでいます。
+              また、DockerやCI/CDの仕組みを取り入れ、環境構築やデプロイの効率化にも注力しています。
+            </p>
+            <p>
+              実務を通じてスキルを着実に磨きながら、プロジェクトに価値を提供できるよう日々努力しています。
+              また新しい技術やアイデアに常にオープンで、チームと協力しながらより良い結果を追求することを心がけています。
+              エンジニアとして技術を磨きつつ、プロジェクトに積極的に貢献する姿勢を持って取り組んでいます。
+            </p>
+          </CardContent>
+        </Card>
+      </section>
+
+      <section id="projects" className="py-20 px-4 bg-gray-900 bg-opacity-60">
+        <h2 className="text-4xl font-bold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">Projects</h2>
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
           >
-            Read our docs
-          </a>
+            <Card className="bg-gray-800 bg-opacity-80 backdrop-blur-md border-none shadow-xl overflow-hidden">
+              <CardHeader>
+                <CardTitle className="text-3xl font-bold text-purple-400 text-center">Coming Soon</CardTitle>
+                <CardDescription className="text-gray-300 text-center text-xl mt-4">
+                  公開に向けて準備中です。しばしお待ちください。
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <Clock className="w-24 h-24 text-purple-400 mb-6 animate-pulse" />
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </section>
+
+      <section id="skills" className="py-20 px-4 bg-gray-900 bg-opacity-60 flex flex-col justify-center">
+        <h2 className="text-4xl font-bold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">Skills</h2>
+        <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+          {skillCategories.map((category, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, scale: 0.5 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Card className="bg-gray-800 bg-opacity-80 backdrop-blur-md border-none shadow-xl h-full">
+                <CardHeader>
+                  <CardTitle className="text-lg font-bold text-purple-400">{category.name}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {category.skills.map((skill) => (
+                      <Badge 
+                        key={skill.name} 
+                        variant="secondary" 
+                        className={`${skillColors[skill.type as keyof typeof skillColors]} text-gray-100`}
+                      >
+                        {skill.name}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      <section id="contact" className="py-10 px-4 flex items-center justify-center bg-gray-900 bg-opacity-60">
+        <Card className="w-full max-w-md bg-gray-800 bg-opacity-80 backdrop-blur-md border-none shadow-xl">
+          <CardHeader>
+            <CardTitle className="text-3xl font-bold mb-2 text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">Contact</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <Label htmlFor="title" className="text-gray-200 font-medium">タイトル</Label>
+                <Input
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  required
+                  className="bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400"
+                  placeholder="タイトルを入力してください"
+                />
+              </div>
+              <div>
+                <Label htmlFor="email" className="text-gray-200 font-medium">メールアドレス</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                  className="bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400"
+                  placeholder="メールアドレスを入力してください"
+                />
+              </div>
+              <div>
+                <Label htmlFor="content" className="text-gray-200 font-medium">内容</Label>
+                <Textarea
+                  id="content"
+                  name="content"
+                  value={formData.content}
+                  onChange={handleInputChange}
+                  required
+                  className="bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400"
+                  placeholder="お問い合わせ内容を入力してください"
+                />
+              </div>
+              <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium" disabled>
+                送信
+              </Button>
+            </form>
+            <div className="flex justify-center space-x-6 mt-6">
+              <Button variant="outline" size="icon" asChild className="text-purple-400 border-purple-400 hover:bg-purple-400 hover:text-gray-900 transition-colors duration-300">
+                <a href="https://github.com/yuya-take" target="_blank" rel="noopener noreferrer">
+                  <Github className="h-6 w-6" />
+                  <span className="sr-only">GitHub</span>
+                </a>
+              </Button>
+              <Button variant="outline" size="icon" asChild className="text-purple-400 border-purple-400 hover:bg-purple-400 hover:text-gray-900 transition-colors duration-300">
+                <a href="https://linkedin.com/in/yuya-takemasa-456763285" target="_blank" rel="noopener noreferrer">
+                  <Linkedin className="h-6 w-6" />
+                  <span className="sr-only">LinkedIn</span>
+                </a>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </section>
     </div>
-  );
+  )
 }
