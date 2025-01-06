@@ -214,6 +214,9 @@ export default function Portfolio() {
                 <span className="font-semibold">出身地:</span> 千葉県
               </p>
               <p className="mb-2">
+                <span className="font-semibold">趣味:</span> ゴルフ・旅行（プロフィール写真はバングラディッシュ）
+              </p>
+              <p className="mb-2">
                 <span className="font-semibold">最終学歴:</span> 千葉大学大学院 融合理工学府 先進理化学専攻 物理学コース
                 修士課程修了
               </p>
