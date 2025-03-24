@@ -56,6 +56,7 @@ const skillCategories = [
     name: "DevOps",
     skills: [
       { name: "Docker", type: "other" },
+      { name: "Kubernetes", type: "other" },
       { name: "CI/CD", type: "other" },
       { name: "AWS", type: "other" },
       { name: "CloudFormation", type: "other" },
@@ -75,6 +76,8 @@ const skillCategories = [
     skills: [
       { name: "Go", type: "language" },
       { name: "C++", type: "language" },
+      { name: "kafka", type: "other" },
+      { name: "EMQX", type: "other" },
     ],
   },
 ];
