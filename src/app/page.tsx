@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Clock, Github, Linkedin } from "lucide-react";
+import { ExternalLink, Github, Linkedin } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const skillColors = {
@@ -31,6 +31,8 @@ const skillCategories = [
       { name: "Svelte", type: "framework" },
       { name: "SvelteKit", type: "framework" },
       { name: "Tauri", type: "framework" },
+      { name: "React Native", type: "framework" },
+      { name: "Flutter", type: "framework" },
     ],
   },
   {
@@ -254,13 +256,39 @@ export default function Portfolio() {
           <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <Card className="bg-gray-800 bg-opacity-80 backdrop-blur-md border-none shadow-xl overflow-hidden">
               <CardHeader>
-                <CardTitle className="text-3xl font-bold text-purple-400 text-center">Coming Soon</CardTitle>
-                <CardDescription className="text-gray-300 text-center text-xl mt-4">
-                  公開に向けて準備中です。しばしお待ちください。
+                <CardTitle className="text-2xl font-bold text-purple-400">ScoreScreen AI</CardTitle>
+                <CardDescription className="text-gray-300 text-lg mt-2">
+                  野球スコアブックをデジタル化し、AIがデータを分析するiOSアプリ
                 </CardDescription>
               </CardHeader>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <Clock className="w-24 h-24 text-purple-400 mb-6 animate-pulse" />
+              <CardContent className="space-y-4">
+                <p className="text-gray-300 leading-relaxed">
+                  「スコアをつける」から「スコアで戦う」へ。チーム管理・試合記録・AI分析を一つのアプリに統合し、チーム戦略と選手の成長をデータの力でサポートします。
+                </p>
+                <div className="space-y-2">
+                  <h4 className="text-sm font-semibold text-purple-300">主な機能</h4>
+                  <ul className="text-gray-400 text-sm space-y-1 list-disc list-inside">
+                    <li>チーム作成・選手登録・役割管理</li>
+                    <li>試合作成からスコア入力・結果記録までのデジタル管理</li>
+                    <li>AIによる試合データ自動解析・レポート生成・戦略提案</li>
+                  </ul>
+                </div>
+                <div className="flex flex-wrap gap-2 pt-2">
+                  {["iOS", "AI", "スポーツテック"].map((tech) => (
+                    <Badge key={tech} className="bg-purple-700 text-white text-xs">{tech}</Badge>
+                  ))}
+                </div>
+                <div className="pt-4">
+                  <a
+                    href="https://scorescreen-ai-lp.vercel.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-purple-400 hover:text-purple-300 transition-colors text-sm"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    ランディングページを見る
+                  </a>
+                </div>
               </CardContent>
             </Card>
           </motion.div>
