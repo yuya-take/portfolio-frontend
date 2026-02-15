@@ -58,19 +58,9 @@ const skillCategories = [
     name: "DevOps",
     skills: [
       { name: "Docker", type: "other" },
-      { name: "Kubernetes", type: "other" },
       { name: "CI/CD", type: "other" },
       { name: "AWS", type: "other" },
       { name: "CloudFormation", type: "other" },
-    ],
-  },
-  {
-    name: "データサイエンス・機械学習",
-    skills: [
-      { name: "Pandas", type: "library" },
-      { name: "scikit-learn", type: "library" },
-      { name: "TensorFlow", type: "library" },
-      { name: "PyTorch", type: "library" },
     ],
   },
   {
