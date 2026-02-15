@@ -4,10 +4,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { toast } from "@/hooks/use-toast";
 import { motion, useScroll, useSpring } from "framer-motion";
 import {
   ExternalLink,
@@ -23,10 +19,12 @@ import {
   Cloud,
   Wrench,
   Mail,
-  Send,
   ArrowUpRight,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+
+const GOOGLE_FORM_URL =
+  "https://docs.google.com/forms/d/e/1FAIpQLSf8jjgUoocAqTmnFxuqNiUGeRmjdY1931C_3YJSFyscA7Dx4A/viewform?embedded=true";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -89,47 +87,6 @@ export default function Portfolio() {
   const [activeSection, setActiveSection] = useState("home");
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
-
-  const [formData, setFormData] = useState({
-    title: "",
-    email: "",
-    content: "",
-  });
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await fetch("/api/send-email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        toast({
-          title: "メッセージ送信完了",
-          description: "お問い合わせありがとうございます。折り返しご連絡いたします。",
-        });
-        setFormData({ title: "", email: "", content: "" });
-      } else {
-        throw new Error("Failed to send email");
-      }
-    } catch (error) {
-      console.error("Failed to send email:", error);
-      toast({
-        title: "エラー",
-        description: "メッセージの送信に失敗しました。後ほど再度お試しください。",
-        variant: "destructive",
-      });
-    }
-  };
 
   const scrollTo = (id: string) => {
     const element = document.getElementById(id);
@@ -535,24 +492,24 @@ export default function Portfolio() {
           </motion.h2>
 
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 gap-10"
             variants={staggerContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
+            className="space-y-8"
           >
-            {/* Left: description + social */}
-            <motion.div variants={fadeInUp} className="space-y-6">
-              <div className="flex items-center gap-3 mb-4">
+            {/* Description + social */}
+            <motion.div variants={fadeInUp} className="text-center space-y-4">
+              <div className="flex items-center justify-center gap-3">
                 <div className="p-2.5 rounded-xl bg-purple-500/10">
                   <Mail className="w-5 h-5 text-purple-400" />
                 </div>
                 <h3 className="text-xl font-semibold text-white">Get in Touch</h3>
               </div>
-              <p className="text-gray-400 leading-relaxed">
-                お仕事のご相談やご質問など、お気軽にお問い合わせください。できるだけ早くご返信いたします。
+              <p className="text-gray-400 leading-relaxed max-w-lg mx-auto">
+                お仕事のご相談やご質問など、お気軽にお問い合わせください。以下のフォームまたはSNSからどうぞ。
               </p>
-              <div className="flex gap-3 pt-2">
+              <div className="flex gap-3 justify-center">
                 <a
                   href="https://github.com/yuya-take"
                   target="_blank"
@@ -572,62 +529,19 @@ export default function Portfolio() {
               </div>
             </motion.div>
 
-            {/* Right: form */}
-            <motion.div variants={fadeInUp} className="relative">
-              <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-full blur-2xl" />
-              <form onSubmit={handleSubmit} className="space-y-4 relative">
-                <div>
-                  <Label htmlFor="title" className="text-gray-300 text-sm font-medium">
-                    タイトル
-                  </Label>
-                  <Input
-                    id="title"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleInputChange}
-                    required
-                    className="bg-gray-900/80 border-gray-700/50 text-gray-100 placeholder-gray-600 focus:border-purple-500/50 mt-1.5"
-                    placeholder="タイトルを入力してください"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="email" className="text-gray-300 text-sm font-medium">
-                    メールアドレス
-                  </Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    className="bg-gray-900/80 border-gray-700/50 text-gray-100 placeholder-gray-600 focus:border-purple-500/50 mt-1.5"
-                    placeholder="メールアドレスを入力してください"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="content" className="text-gray-300 text-sm font-medium">
-                    内容
-                  </Label>
-                  <Textarea
-                    id="content"
-                    name="content"
-                    value={formData.content}
-                    onChange={handleInputChange}
-                    required
-                    className="bg-gray-900/80 border-gray-700/50 text-gray-100 placeholder-gray-600 focus:border-purple-500/50 mt-1.5 min-h-[120px]"
-                    placeholder="お問い合わせ内容を入力してください"
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full bg-purple-600 hover:bg-purple-500 text-white font-medium rounded-lg shadow-lg shadow-purple-600/20 transition-all duration-300"
-                  disabled
+            {/* Google Form embed */}
+            <motion.div variants={fadeInUp} className="flex justify-center">
+              <div className="w-full max-w-2xl rounded-2xl overflow-hidden border border-gray-800/50">
+                <iframe
+                  src={GOOGLE_FORM_URL}
+                  width="100%"
+                  height="600"
+                  className="bg-transparent"
+                  title="お問い合わせフォーム"
                 >
-                  <Send className="w-4 h-4 mr-2" />
-                  送信
-                </Button>
-              </form>
+                  読み込み中…
+                </iframe>
+              </div>
             </motion.div>
           </motion.div>
         </div>
