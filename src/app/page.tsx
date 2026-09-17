@@ -6,20 +6,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion, useScroll, useSpring } from "framer-motion";
 import {
+  ArrowUpRight,
+  ChevronDown,
+  Cloud,
+  Code2,
+  Database,
   ExternalLink,
   Github,
-  Linkedin,
-  MapPin,
   GraduationCap,
   Heart,
-  ChevronDown,
-  Code2,
-  Server,
-  Database,
-  Cloud,
-  Wrench,
+  Linkedin,
   Mail,
-  ArrowUpRight,
+  MapPin,
+  Server,
+  Wrench,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -55,7 +55,18 @@ const categoryMeta: Record<string, { icon: React.ElementType; color: string; bg:
 const skillCategories = [
   {
     name: "フロントエンド",
-    skills: ["TypeScript", "React", "Next.js", "Vue.js", "Nuxt", "Svelte", "SvelteKit", "Tauri", "React Native", "Flutter"],
+    skills: [
+      "TypeScript",
+      "React",
+      "Next.js",
+      "Vue.js",
+      "Nuxt",
+      "Svelte",
+      "SvelteKit",
+      "Tauri",
+      "React Native",
+      "Flutter",
+    ],
   },
   {
     name: "バックエンド",
@@ -136,9 +147,7 @@ export default function Portfolio() {
                 <button
                   onClick={() => scrollTo(section)}
                   className={`relative px-3 py-2 text-sm uppercase tracking-wider transition-colors duration-300 rounded-md ${
-                    activeSection === section
-                      ? "text-white"
-                      : "text-gray-400 hover:text-gray-200"
+                    activeSection === section ? "text-white" : "text-gray-400 hover:text-gray-200"
                   }`}
                 >
                   {section}
@@ -173,12 +182,7 @@ export default function Portfolio() {
           />
         </div>
 
-        <motion.div
-          className="text-center z-10 px-4"
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-        >
+        <motion.div className="text-center z-10 px-4" variants={staggerContainer} initial="hidden" animate="visible">
           <motion.div variants={scaleIn}>
             <Avatar className="w-36 h-36 mx-auto mb-8 ring-4 ring-purple-500/50 ring-offset-4 ring-offset-gray-950 shadow-2xl shadow-purple-500/20">
               <AvatarImage src="https://github.com/yuya-take.png" alt="Yuya Takemasa" />
@@ -212,7 +216,7 @@ export default function Portfolio() {
         <motion.div
           className="absolute bottom-8 left-1/2 -translate-x-1/2"
           animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
         >
           <ChevronDown className="w-6 h-6 text-gray-500" />
         </motion.div>
@@ -382,10 +386,7 @@ export default function Portfolio() {
                       { title: "デジタル記録", desc: "試合作成からスコア入力・結果記録" },
                       { title: "AI分析", desc: "自動解析・レポート生成・戦略提案" },
                     ].map((feature) => (
-                      <div
-                        key={feature.title}
-                        className="p-4 rounded-xl bg-gray-800/50 border border-gray-700/50"
-                      >
+                      <div key={feature.title} className="p-4 rounded-xl bg-gray-800/50 border border-gray-700/50">
                         <p className="text-sm font-semibold text-purple-300 mb-1">{feature.title}</p>
                         <p className="text-xs text-gray-500">{feature.desc}</p>
                       </div>
@@ -411,6 +412,71 @@ export default function Portfolio() {
                   >
                     <ExternalLink className="w-4 h-4" />
                     ランディングページを見る
+                  </a>
+                </CardContent>
+              </Card>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            viewport={{ once: true }}
+            className="mt-10"
+          >
+            {/* Gradient border trick */}
+            <div className="p-px rounded-2xl bg-gradient-to-br from-amber-500/50 via-transparent to-orange-500/50">
+              <Card className="bg-gray-900 rounded-2xl border-none overflow-hidden">
+                {/* Accent bar */}
+                <div className="h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500" />
+                <CardHeader className="pb-2">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <CardTitle className="text-2xl font-bold text-white mb-2">Latent</CardTitle>
+                      <p className="text-gray-400 text-lg">アイデアが時間とともに「冷めていく」iOSメモアプリ</p>
+                    </div>
+                    <a href="/latent" className="p-2 rounded-full hover:bg-gray-800 transition-colors">
+                      <ArrowUpRight className="w-5 h-5 text-amber-400" />
+                    </a>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <p className="text-gray-400 leading-relaxed">
+                    メモを溜めるのではなく、忘れることを設計に組み込んだアイデア帳。各アイデアは「温度」を持ち、放置すると指数関数的に冷めてインクの色が薄れていきます。整理やタグ付けは不要で、関心の所在が濃淡と光のにじみとして紙の上に浮かび上がります。
+                  </p>
+
+                  {/* Feature mini cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    {[
+                      { title: "温度と減衰", desc: "触れないアイデアは暖色から青灰へ薄れていく" },
+                      { title: "浮上", desc: "冷めかけたアイデアを1日1件ホームに提示" },
+                      { title: "再燃", desc: "冷えたアイデアを開くと、にじみが広がり色が戻る" },
+                    ].map((feature) => (
+                      <div key={feature.title} className="p-4 rounded-xl bg-gray-800/50 border border-gray-700/50">
+                        <p className="text-sm font-semibold text-amber-300 mb-1">{feature.title}</p>
+                        <p className="text-xs text-gray-500">{feature.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {["iOS", "React Native", "Expo", "SQLite"].map((tech) => (
+                      <Badge
+                        key={tech}
+                        className="bg-amber-500/15 text-amber-300 border border-amber-500/20 hover:bg-amber-500/25 transition-colors"
+                      >
+                        {tech}
+                      </Badge>
+                    ))}
+                  </div>
+
+                  <a
+                    href="/latent"
+                    className="inline-flex items-center gap-2 text-amber-400 hover:text-amber-300 transition-colors text-sm"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    サポートページを見る
                   </a>
                 </CardContent>
               </Card>
