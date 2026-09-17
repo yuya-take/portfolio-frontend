@@ -53,11 +53,11 @@ export default function LatentSupportPage() {
 
         <h2 className="mt-12 text-base font-semibold tracking-wide">お問い合わせ</h2>
         <p className="mt-2 text-[15px]">
-          不具合のご報告やご要望は{" "}
-          <a className="text-[#a4551e] underline" href="mailto:yuya970405@gmail.com">
-            yuya970405@gmail.com
-          </a>{" "}
-          までお送りください。
+          不具合のご報告やご要望は、
+          <Link className="text-[#a4551e] underline" href="/#contact">
+            お問い合わせフォーム
+          </Link>
+          からお送りください。
         </p>
 
         <p className="mt-16 text-sm text-[#8a8378]">

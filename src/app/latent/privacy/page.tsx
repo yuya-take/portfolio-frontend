@@ -49,11 +49,11 @@ export default function LatentPrivacyPage() {
         </Section>
         <Section title="お問い合わせ">
           <p>
-            本ポリシーに関するお問い合わせは{" "}
-            <a className="text-[#a4551e] underline" href="mailto:yuya970405@gmail.com">
-              yuya970405@gmail.com
-            </a>{" "}
-            までご連絡ください。
+            本ポリシーに関するお問い合わせは、
+            <Link className="text-[#a4551e] underline" href="/#contact">
+              お問い合わせフォーム
+            </Link>
+            からご連絡ください。
           </p>
         </Section>
 
@@ -83,10 +83,10 @@ export default function LatentPrivacyPage() {
           </Section>
           <Section title="Contact">
             <p>
-              For questions about this policy, contact{" "}
-              <a className="text-[#a4551e] underline" href="mailto:yuya970405@gmail.com">
-                yuya970405@gmail.com
-              </a>
+              For questions about this policy, please reach out via the{" "}
+              <Link className="text-[#a4551e] underline" href="/#contact">
+                contact form
+              </Link>
               .
             </p>
           </Section>
