@@ -501,9 +501,14 @@ export default function Portfolio() {
                       <CardTitle className="text-2xl font-bold text-white mb-2">Dew</CardTitle>
                       <p className="text-gray-400 text-lg">水やりの間隔を設定させず、記録から学習する iOS アプリ</p>
                     </div>
-                    <Badge className="shrink-0 bg-emerald-500/15 text-emerald-300 border border-emerald-500/20">
-                      TestFlight
-                    </Badge>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Badge className="bg-emerald-500/15 text-emerald-300 border border-emerald-500/20">
+                        TestFlight
+                      </Badge>
+                      <a href="/dew" className="p-2 rounded-full hover:bg-gray-800 transition-colors">
+                        <ArrowUpRight className="w-5 h-5 text-emerald-400" />
+                      </a>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -539,6 +544,14 @@ export default function Portfolio() {
                       </Badge>
                     ))}
                   </div>
+
+                  <a
+                    href="/dew"
+                    className="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors text-sm"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    サポートページを見る
+                  </a>
                 </CardContent>
               </Card>
             </div>
