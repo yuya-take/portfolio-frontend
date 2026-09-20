@@ -482,6 +482,80 @@ export default function Portfolio() {
               </Card>
             </div>
           </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            viewport={{ once: true }}
+            className="mt-10"
+          >
+            {/* Gradient border trick */}
+            <div className="p-px rounded-2xl bg-gradient-to-br from-emerald-500/50 via-transparent to-teal-500/50">
+              <Card className="bg-gray-900 rounded-2xl border-none overflow-hidden">
+                {/* Accent bar */}
+                <div className="h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-green-600" />
+                <CardHeader className="pb-2">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <CardTitle className="text-2xl font-bold text-white mb-2">Dew</CardTitle>
+                      <p className="text-gray-400 text-lg">水やりの間隔を設定させず、記録から学習する iOS アプリ</p>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Badge className="bg-emerald-500/15 text-emerald-300 border border-emerald-500/20">
+                        TestFlight
+                      </Badge>
+                      <a href="/dew" className="p-2 rounded-full hover:bg-gray-800 transition-colors">
+                        <ArrowUpRight className="w-5 h-5 text-emerald-400" />
+                      </a>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <p className="text-gray-400 leading-relaxed">
+                    「3日ごと」のような固定間隔は、夏は水切れ、冬は根腐れを起こします。Dew
+                    は水やりの間隔をユーザーに一度も設定させません。「水をあげたら1タップ」の記録から株ごとの間隔を学習し、季節で自動補正します。ハーブ・野菜56種の図鑑から選んで登録でき、記録は端末の中にだけ保存されます。
+                  </p>
+
+                  {/* Feature mini cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    {[
+                      { title: "1タップの記録", desc: "水やりと雨をその場で。追加の質問は任意" },
+                      {
+                        title: "矛盾したときだけ学習",
+                        desc: "回答が推定とずれたときだけ間隔を動かす",
+                      },
+                      { title: "季節で自動補正", desc: "冬は伸ばし、夏は縮める。根腐れを防ぐ" },
+                    ].map((feature) => (
+                      <div key={feature.title} className="p-4 rounded-xl bg-gray-800/50 border border-gray-700/50">
+                        <p className="text-sm font-semibold text-emerald-300 mb-1">{feature.title}</p>
+                        <p className="text-xs text-gray-500">{feature.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {["iOS", "React Native", "Expo", "TypeScript"].map((tech) => (
+                      <Badge
+                        key={tech}
+                        className="bg-emerald-500/15 text-emerald-300 border border-emerald-500/20 hover:bg-emerald-500/25 transition-colors"
+                      >
+                        {tech}
+                      </Badge>
+                    ))}
+                  </div>
+
+                  <a
+                    href="/dew"
+                    className="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors text-sm"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    サポートページを見る
+                  </a>
+                </CardContent>
+              </Card>
+            </div>
+          </motion.div>
         </div>
       </section>
 
