@@ -556,6 +556,77 @@ export default function Portfolio() {
               </Card>
             </div>
           </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.45 }}
+            viewport={{ once: true }}
+            className="mt-10"
+          >
+            {/* Gradient border trick */}
+            <div className="p-px rounded-2xl bg-gradient-to-br from-orange-500/50 via-transparent to-red-500/50">
+              <Card className="bg-gray-900 rounded-2xl border-none overflow-hidden">
+                {/* Accent bar */}
+                <div className="h-1 bg-gradient-to-r from-orange-500 via-red-500 to-rose-600" />
+                <CardHeader className="pb-2">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <CardTitle className="text-2xl font-bold text-white mb-2">Insaporire</CardTitle>
+                      <p className="text-gray-400 text-lg">
+                        料理の試作をバージョンで重ね、違いと気づきを残す iOS アプリ
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Badge className="bg-orange-500/15 text-orange-300 border border-orange-500/20">TestFlight</Badge>
+                      <a href="/insaporire" className="p-2 rounded-full hover:bg-gray-800 transition-colors">
+                        <ArrowUpRight className="w-5 h-5 text-orange-400" />
+                      </a>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <p className="text-gray-400 leading-relaxed">
+                    料理人が修行時代にやる「試作の記録と振り返り」のためのノート。完成したレシピを 1
+                    枚で持つのではなく、同じ料理を作り直すたびに新しいバージョンとして追記し、前回との違い・その日の条件・気づきを残します。パンや出汁のように配合が味を決める料理では、基準材料を指定すると比率の自動計算と分量の換算が使えます。記録は端末の中にだけ保存されます。
+                  </p>
+
+                  {/* Feature mini cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    {[
+                      { title: "バージョンで追記", desc: "材料・手順は履歴として残し、気づきは後から書き足す" },
+                      { title: "並べて比較", desc: "2 つのバージョンを左右に並べ、変わった箇所を強調" },
+                      { title: "比率と換算", desc: "基準材料を決めた料理だけ、比率と分量スケールを表示" },
+                    ].map((feature) => (
+                      <div key={feature.title} className="p-4 rounded-xl bg-gray-800/50 border border-gray-700/50">
+                        <p className="text-sm font-semibold text-orange-300 mb-1">{feature.title}</p>
+                        <p className="text-xs text-gray-500">{feature.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {["iOS", "React Native", "Expo", "SQLite"].map((tech) => (
+                      <Badge
+                        key={tech}
+                        className="bg-orange-500/15 text-orange-300 border border-orange-500/20 hover:bg-orange-500/25 transition-colors"
+                      >
+                        {tech}
+                      </Badge>
+                    ))}
+                  </div>
+
+                  <a
+                    href="/insaporire"
+                    className="inline-flex items-center gap-2 text-orange-400 hover:text-orange-300 transition-colors text-sm"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    サポートページを見る
+                  </a>
+                </CardContent>
+              </Card>
+            </div>
+          </motion.div>
         </div>
       </section>
 
