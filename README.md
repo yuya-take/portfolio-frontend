@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Yuya Takemasa — Portfolio
 
-## Getting Started
+Next.js (App Router) と Tailwind CSS で作ったポートフォリオサイト。
 
-First, run the development server:
+## 開発
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # 本番ビルド
+npm run lint     # ESLint
+npx biome check --write src   # 整形と lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 構成
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+src/
+├─ app/
+│  ├─ page.tsx               トップページ
+│  ├─ layout.tsx             メタデータ
+│  ├─ globals.css            ベースのスタイル
+│  ├─ opengraph-image.tsx    共有用の OG 画像（ビルド時に生成）
+│  ├─ icon.svg ほか          ファビコン類
+│  └─ latent / dew / insaporire   各アプリのサポートページとプライバシーポリシー
+├─ components/site/
+│  ├─ ink-canvas.tsx         墨流しの背景（WebGL2。クリックで墨が落ちる）
+│  ├─ reveal.tsx             見出しのせり上がりと、スクロールで現れるブロック
+│  ├─ project-visual.tsx     案件ごとのデモの切り替え
+│  ├─ works/                 各アプリのコンセプトデモ
+│  └─ contact-form.tsx       お問い合わせフォームの開閉
+└─ lib/site.ts               掲載内容（プロフィール・経歴・案件・スキル）
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 内容を更新するとき
 
-## Learn More
+文章・案件・スキルは `src/lib/site.ts` にまとまっています。
 
-To learn more about Next.js, take a look at the following resources:
+- 案件を足す：`projects` に 1 件追加し、`components/site/works/` にデモを作って `project-visual.tsx` に登録する
+- 案件の帯の色：`projects[].theme`
+- 全体の色と書体：`tailwind.config.ts`。Web フォントは使わず、端末に入っている書体で表示します
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## メモ
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 各案件のデモは、アプリの考え方を再現したものです。中のデータ（メモの文面、配合、スコアなど）はサンプルです。
+- お問い合わせは Google フォームの埋め込みです（`src/lib/site.ts` の `GOOGLE_FORM_URL`）。ボタンを押すまで読み込みません。サポートページからの `/#contact` で来たときは最初から開きます。
+- OG 画像の URL は、Vercel 以外に置く場合 `NEXT_PUBLIC_SITE_URL` の設定が必要です。

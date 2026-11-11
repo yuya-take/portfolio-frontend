@@ -1,787 +1,281 @@
-"use client";
+import { ContactForm } from "@/components/site/contact-form";
+import { InkCanvas } from "@/components/site/ink-canvas";
+import { ProjectVisual } from "@/components/site/project-visual";
+import { Lines, MotionProvider, Reveal } from "@/components/site/reveal";
+import { GOOGLE_FORM_URL, type Project, chapters, contact, facts, profile, projects, skillGroups } from "@/lib/site";
+import Link from "next/link";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { motion, useScroll, useSpring } from "framer-motion";
-import {
-  ArrowUpRight,
-  ChevronDown,
-  Cloud,
-  Code2,
-  Database,
-  ExternalLink,
-  Github,
-  GraduationCap,
-  Heart,
-  Linkedin,
-  Mail,
-  MapPin,
-  Server,
-  Wrench,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-
-const GOOGLE_FORM_URL =
-  "https://docs.google.com/forms/d/e/1FAIpQLSf8jjgUoocAqTmnFxuqNiUGeRmjdY1931C_3YJSFyscA7Dx4A/viewform?embedded=true";
-
-const fadeInUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.15, delayChildren: 0.2 },
-  },
-};
-
-const scaleIn = {
-  hidden: { opacity: 0, scale: 0.8 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" } },
-};
-
-const categoryMeta: Record<string, { icon: React.ElementType; color: string; bg: string }> = {
-  フロントエンド: { icon: Code2, color: "text-blue-400", bg: "bg-blue-500/10 border-blue-500/20" },
-  バックエンド: { icon: Server, color: "text-green-400", bg: "bg-green-500/10 border-green-500/20" },
-  データベース: { icon: Database, color: "text-amber-400", bg: "bg-amber-500/10 border-amber-500/20" },
-  DevOps: { icon: Cloud, color: "text-cyan-400", bg: "bg-cyan-500/10 border-cyan-500/20" },
-  その他: { icon: Wrench, color: "text-rose-400", bg: "bg-rose-500/10 border-rose-500/20" },
-};
-
-const skillCategories = [
-  {
-    name: "フロントエンド",
-    skills: [
-      "TypeScript",
-      "React",
-      "Next.js",
-      "Vue.js",
-      "Nuxt",
-      "Svelte",
-      "SvelteKit",
-      "Tauri",
-      "React Native",
-      "Flutter",
-    ],
-  },
-  {
-    name: "バックエンド",
-    skills: ["Rust", "Python", "Axum", "FastAPI", "Django", "REST API"],
-  },
-  {
-    name: "データベース",
-    skills: ["MySQL", "PostgreSQL", "DynamoDB"],
-  },
-  {
-    name: "DevOps",
-    skills: ["Docker", "CI/CD", "AWS", "CloudFormation"],
-  },
-  {
-    name: "その他",
-    skills: ["Go", "C++", "kafka", "EMQX"],
-  },
+const nav = [
+  { id: "about", label: "About" },
+  { id: "projects", label: "Projects" },
+  { id: "skills", label: "Skills" },
+  { id: "contact", label: "Contact" },
 ];
 
-function SectionSeparator() {
+const INK = [17, 17, 17] as const;
+const WHITE = [255, 255, 255] as const;
+
+const container = "mx-auto w-full max-w-[1280px] px-5 md:px-10";
+/** ページ全体で使う左右 2 段。狭い画面では 1 段に畳む */
+const columns = "grid gap-y-10 lg:grid-cols-2 lg:gap-x-20";
+
+// JS が無効でも、動きの初期状態（透明・ずらし）のまま隠れてしまわないようにする
+const noScriptStyle = `[style*="opacity"]{opacity:1!important}[style*="transform"]{transform:none!important}`;
+
+function ProfileLinks({ className }: { className?: string }) {
   return (
-    <div className="flex justify-center">
-      <div className="w-24 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
-    </div>
+    <ul className={`flex gap-6 tracking-normal ${className ?? ""}`}>
+      {profile.links.map((link) => (
+        <li key={link.href}>
+          <a href={link.href} target="_blank" rel="noopener noreferrer" className="link">
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
   );
 }
 
-export default function Portfolio() {
-  const [activeSection, setActiveSection] = useState("home");
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+function SectionTitle({ id, children, className }: { id: string; children: string; className?: string }) {
+  return (
+    <h2 id={`${id}-title`} className={`border-t pt-5 font-semibold tracking-normal ${className ?? "border-line"}`}>
+      {children}
+    </h2>
+  );
+}
 
-  const scrollTo = (id: string) => {
-    const element = document.getElementById(id);
-    element?.scrollIntoView({ behavior: "smooth" });
-    setActiveSection(id);
-  };
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = ["home", "about me", "projects", "skills", "contact"];
-      const current = sections.find((section) => {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          return rect.top <= 100 && rect.bottom >= 100;
-        }
-        return false;
-      });
-      if (current) {
-        setActiveSection(current);
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+function ProjectBand({ project }: { project: Project }) {
+  const { theme, link } = project;
+  const linkClass =
+    "group inline-flex items-center gap-3 border border-card-fg/40 px-5 py-3 leading-normal transition-colors duration-300 hover:bg-card-fg hover:text-card-bg";
+  const linkBody = (
+    <>
+      {link.label}
+      {/* biome-ignore lint/a11y/noSvgWithoutTitle: 装飾。aria-hidden で読み上げから外している */}
+      <svg
+        viewBox="0 0 14 10"
+        className="h-2.5 w-3.5 transition-transform duration-300 ease-expo group-hover:translate-x-1"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.3"
+        aria-hidden
+      >
+        <path d="M0 5h12.5M8.5 1l4 4-4 4" />
+      </svg>
+    </>
+  );
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100">
-      {/* Scroll Progress Bar */}
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-[2px] scroll-progress z-[60] origin-left"
-        style={{ scaleX }}
-      />
-
-      {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-gray-950/80 backdrop-blur-xl border-b border-gray-800/50">
-        <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-3">
-          <button
-            onClick={() => scrollTo("home")}
-            className="text-xl font-bold text-gradient bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent"
+    <article
+      aria-labelledby={`project-${project.slug}`}
+      className="bg-card-bg text-card-fg"
+      style={
+        {
+          "--card-bg": theme.bg,
+          "--card-fg": theme.fg,
+          "--card-accent": theme.accent,
+          "--card-panel": theme.panel,
+        } as React.CSSProperties
+      }
+    >
+      <div className={`${container} grid gap-y-10 py-14 md:py-20 lg:grid-cols-12 lg:gap-x-12`}>
+        <Reveal className="flex flex-col lg:col-span-5">
+          <h3
+            id={`project-${project.slug}`}
+            className="flex flex-wrap items-baseline gap-x-4 gap-y-2 text-[clamp(2.5rem,4.6vw,4rem)] font-semibold leading-none tracking-[-0.03em]"
           >
-            YT.
-          </button>
-          <ul className="flex space-x-1">
-            {["home", "about me", "projects", "skills", "contact"].map((section) => (
-              <li key={section}>
-                <button
-                  onClick={() => scrollTo(section)}
-                  className={`relative px-3 py-2 text-sm uppercase tracking-wider transition-colors duration-300 rounded-md ${
-                    activeSection === section ? "text-white" : "text-gray-400 hover:text-gray-200"
-                  }`}
-                >
-                  {section}
-                  {activeSection === section && (
-                    <motion.div
-                      layoutId="activeNav"
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-400 to-pink-500"
-                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    />
-                  )}
-                </button>
-              </li>
+            {project.name}
+            {project.status && (
+              <span className="text-[13px] font-normal tracking-normal text-card-accent">{project.status}</span>
+            )}
+          </h3>
+          <p className="display mt-6 text-balance text-[clamp(1.1rem,1.55vw,1.35rem)] leading-[1.75]">
+            {project.tagline}
+          </p>
+          <p className="mt-5 text-sm leading-[1.95] text-card-fg/75">{project.description}</p>
+          <dl className="mt-7 text-[13px] leading-relaxed">
+            {project.features.map((feature) => (
+              <div
+                key={feature.title}
+                className="grid gap-x-4 gap-y-0.5 border-t border-card-fg/15 py-3 sm:grid-cols-[10.5em_1fr]"
+              >
+                <dt className="font-semibold text-card-accent">{feature.title}</dt>
+                <dd className="text-card-fg/75">{feature.desc}</dd>
+              </div>
             ))}
-          </ul>
+          </dl>
+          <div className="mt-auto flex flex-wrap items-end justify-between gap-x-6 gap-y-5 pt-10">
+            <p className="text-[13px] tracking-normal text-card-fg/60">{project.tech.join(" / ")}</p>
+            {link.href.startsWith("http") ? (
+              <a href={link.href} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                {linkBody}
+              </a>
+            ) : (
+              <Link href={link.href} className={linkClass}>
+                {linkBody}
+              </Link>
+            )}
+          </div>
+        </Reveal>
+        <div className="lg:col-span-7">
+          <ProjectVisual slug={project.slug} />
         </div>
-      </nav>
+      </div>
+    </article>
+  );
+}
 
-      {/* Hero */}
-      <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden pt-16">
-        {/* Background orbs */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-purple-600/20 blur-3xl animate-float animate-pulse-glow" />
-          <div className="absolute top-1/3 right-1/4 w-80 h-80 rounded-full bg-pink-600/15 blur-3xl animate-float-delayed animate-pulse-glow" />
-          <div className="absolute bottom-1/4 left-1/3 w-72 h-72 rounded-full bg-indigo-600/20 blur-3xl animate-float-slow animate-pulse-glow" />
-          {/* Dot pattern */}
-          <div
-            className="absolute inset-0 opacity-[0.03]"
-            style={{
-              backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)",
-              backgroundSize: "24px 24px",
-            }}
-          />
-        </div>
+export default function Home() {
+  return (
+    <MotionProvider>
+      <noscript>
+        <style>{noScriptStyle}</style>
+      </noscript>
 
-        <motion.div className="text-center z-10 px-4" variants={staggerContainer} initial="hidden" animate="visible">
-          <motion.div variants={scaleIn}>
-            <Avatar className="w-36 h-36 mx-auto mb-8 ring-4 ring-purple-500/50 ring-offset-4 ring-offset-gray-950 shadow-2xl shadow-purple-500/20">
-              <AvatarImage src="https://github.com/yuya-take.png" alt="Yuya Takemasa" />
-              <AvatarFallback>YT</AvatarFallback>
-            </Avatar>
-          </motion.div>
+      <div className="text-[15px] leading-[1.95] tracking-[0.03em] text-ink">
+        <div className="relative flex min-h-[100svh] flex-col overflow-hidden">
+          <div className="absolute inset-0 [mask-image:linear-gradient(to_bottom,black_72%,transparent)]">
+            <InkCanvas
+              line={INK}
+              accent={INK}
+              alpha={0.4}
+              bands={6.5}
+              drops={[{ x: 0.7, y: 0.36, strength: 1, delay: 0.5 }]}
+            />
+          </div>
 
-          <motion.p variants={fadeInUp} className="text-lg text-purple-300 mb-3 tracking-widest uppercase">
-            Full Stack Developer
-          </motion.p>
-
-          <motion.h1 variants={fadeInUp} className="text-6xl md:text-7xl font-bold mb-4 text-gradient">
-            Yuya Takemasa
-          </motion.h1>
-
-          <motion.p variants={fadeInUp} className="text-xl text-gray-400 mb-10 max-w-lg mx-auto">
-            ソフトウェアとハードウェアの両面から、価値あるプロダクトを創る
-          </motion.p>
-
-          <motion.div variants={fadeInUp}>
-            <Button
-              onClick={() => scrollTo("about me")}
-              className="rounded-full bg-purple-600 hover:bg-purple-500 text-white px-8 py-3 shadow-lg shadow-purple-600/25 transition-all duration-300 hover:shadow-purple-500/40"
-            >
-              詳しく見る
-            </Button>
-          </motion.div>
-        </motion.div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-        >
-          <ChevronDown className="w-6 h-6 text-gray-500" />
-        </motion.div>
-      </section>
-
-      <SectionSeparator />
-
-      {/* About Me */}
-      <section id="about me" className="py-24 px-4">
-        <div className="max-w-4xl mx-auto">
-          <motion.h2
-            className="text-4xl font-bold mb-16 text-center text-gradient"
-            variants={fadeInUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
+          <header
+            className={`${container} relative flex flex-wrap items-baseline justify-between gap-x-8 gap-y-1 py-6 tracking-normal md:py-8`}
           >
-            About Me
-          </motion.h2>
-
-          {/* Profile mini cards */}
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-16"
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            <motion.div variants={fadeInUp}>
-              <Card className="bg-gray-900/80 border-gray-800/50 hover:border-purple-500/30 transition-colors">
-                <CardContent className="flex items-center gap-4 p-5">
-                  <div className="p-2.5 rounded-xl bg-purple-500/10">
-                    <MapPin className="w-5 h-5 text-purple-400" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 uppercase tracking-wider">出身地</p>
-                    <p className="text-gray-200 font-medium">千葉県</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            <motion.div variants={fadeInUp}>
-              <Card className="bg-gray-900/80 border-gray-800/50 hover:border-pink-500/30 transition-colors">
-                <CardContent className="flex items-center gap-4 p-5">
-                  <div className="p-2.5 rounded-xl bg-pink-500/10">
-                    <Heart className="w-5 h-5 text-pink-400" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 uppercase tracking-wider">趣味</p>
-                    <p className="text-gray-200 font-medium">ゴルフ・旅行</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            <motion.div variants={fadeInUp}>
-              <Card className="bg-gray-900/80 border-gray-800/50 hover:border-indigo-500/30 transition-colors">
-                <CardContent className="flex items-center gap-4 p-5">
-                  <div className="p-2.5 rounded-xl bg-indigo-500/10">
-                    <GraduationCap className="w-5 h-5 text-indigo-400" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 uppercase tracking-wider">学歴</p>
-                    <p className="text-gray-200 font-medium text-sm">千葉大学大学院 修士課程修了</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </motion.div>
-
-          {/* Career subsections */}
-          <motion.div
-            className="space-y-8"
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            <motion.div variants={fadeInUp} className="border-l-2 border-purple-500/50 pl-6">
-              <h3 className="text-lg font-semibold text-purple-400 mb-2">Academic</h3>
-              <p className="text-gray-400 leading-relaxed">
-                大学時代には、Pythonを使って実験装置を制御するプログラムを開発し、
-                実験結果の分析やデータ処理を行うほか、必要に応じて回路設計も手がけるなど、
-                ソフトウェアとハードウェアの両面で経験を積んできました。
-                また、C++を用いたシミュレーションにより、実験結果と理想的な値との差を確認し、
-                実験対象となる装置の校正を行うことにも取り組みました。
-              </p>
-            </motion.div>
-
-            <motion.div variants={fadeInUp} className="border-l-2 border-pink-500/50 pl-6">
-              <h3 className="text-lg font-semibold text-pink-400 mb-2">Career</h3>
-              <p className="text-gray-400 leading-relaxed">
-                その後、ITエンジニアとしてのキャリアをスタートし、フロントエンド・バックエンド、さらにはインフラまで幅広く対応しています。
-                フロントエンドではReactやNext.jsを活用し、デザインと使いやすさを両立させたインターフェースを作成。
-                バックエンドでは、RustやPythonを使ってスケーラブルなシステムの構築に取り組んでいます。
-                また、DockerやCI/CDの仕組みを取り入れ、環境構築やデプロイの効率化にも注力しています。
-              </p>
-            </motion.div>
-
-            <motion.div variants={fadeInUp} className="border-l-2 border-indigo-500/50 pl-6">
-              <h3 className="text-lg font-semibold text-indigo-400 mb-2">Philosophy</h3>
-              <p className="text-gray-400 leading-relaxed">
-                実務を通じてスキルを着実に磨きながら、プロジェクトに価値を提供できるよう日々努力しています。
-                また新しい技術やアイデアに常にオープンで、チームと協力しながらより良い結果を追求することを心がけています。
-                エンジニアとして技術を磨きつつ、プロジェクトに積極的に貢献する姿勢を持って取り組んでいます。
-              </p>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      <SectionSeparator />
-
-      {/* Projects */}
-      <section id="projects" className="py-24 px-4 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-950/10 to-transparent pointer-events-none" />
-        <div className="max-w-4xl mx-auto relative">
-          <motion.h2
-            className="text-4xl font-bold mb-16 text-center text-gradient"
-            variants={fadeInUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            Projects
-          </motion.h2>
-
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            {/* Gradient border trick */}
-            <div className="p-px rounded-2xl bg-gradient-to-br from-purple-500/50 via-transparent to-pink-500/50">
-              <Card className="bg-gray-900 rounded-2xl border-none overflow-hidden">
-                {/* Accent bar */}
-                <div className="h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-indigo-500" />
-                <CardHeader className="pb-2">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-2xl font-bold text-white mb-2">ScoreScreen AI</CardTitle>
-                      <p className="text-gray-400 text-lg">
-                        野球スコアブックをデジタル化し、AIがデータを分析するiOSアプリ
-                      </p>
-                    </div>
-                    <a
-                      href="https://scorescreen-ai-lp.vercel.app/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 rounded-full hover:bg-gray-800 transition-colors"
-                    >
-                      <ArrowUpRight className="w-5 h-5 text-purple-400" />
+            <h1 className="font-semibold">{profile.name}</h1>
+            <nav aria-label="ページ内">
+              <ul className="flex gap-5 md:gap-8">
+                {nav.map((item) => (
+                  <li key={item.id}>
+                    <a href={`#${item.id}`} className="text-sub transition-colors hover:text-ink">
+                      {item.label}
                     </a>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <p className="text-gray-400 leading-relaxed">
-                    「スコアをつける」から「スコアで戦う」へ。チーム管理・試合記録・AI分析を一つのアプリに統合し、チーム戦略と選手の成長をデータの力でサポートします。
-                  </p>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </header>
 
-                  {/* Feature mini cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    {[
-                      { title: "チーム管理", desc: "チーム作成・選手登録・役割管理" },
-                      { title: "デジタル記録", desc: "試合作成からスコア入力・結果記録" },
-                      { title: "AI分析", desc: "自動解析・レポート生成・戦略提案" },
-                    ].map((feature) => (
-                      <div key={feature.title} className="p-4 rounded-xl bg-gray-800/50 border border-gray-700/50">
-                        <p className="text-sm font-semibold text-purple-300 mb-1">{feature.title}</p>
-                        <p className="text-xs text-gray-500">{feature.desc}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    {["iOS", "AI", "スポーツテック"].map((tech) => (
-                      <Badge
-                        key={tech}
-                        className="bg-purple-500/15 text-purple-300 border border-purple-500/20 hover:bg-purple-500/25 transition-colors"
-                      >
-                        {tech}
-                      </Badge>
-                    ))}
-                  </div>
-
-                  <a
-                    href="https://scorescreen-ai-lp.vercel.app/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-purple-400 hover:text-purple-300 transition-colors text-sm"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    ランディングページを見る
-                  </a>
-                </CardContent>
-              </Card>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            viewport={{ once: true }}
-            className="mt-10"
-          >
-            {/* Gradient border trick */}
-            <div className="p-px rounded-2xl bg-gradient-to-br from-amber-500/50 via-transparent to-orange-500/50">
-              <Card className="bg-gray-900 rounded-2xl border-none overflow-hidden">
-                {/* Accent bar */}
-                <div className="h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500" />
-                <CardHeader className="pb-2">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-2xl font-bold text-white mb-2">Latent</CardTitle>
-                      <p className="text-gray-400 text-lg">アイデアが時間とともに「冷めていく」iOSメモアプリ</p>
-                    </div>
-                    <a href="/latent" className="p-2 rounded-full hover:bg-gray-800 transition-colors">
-                      <ArrowUpRight className="w-5 h-5 text-amber-400" />
-                    </a>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <p className="text-gray-400 leading-relaxed">
-                    メモを溜めるのではなく、忘れることを設計に組み込んだアイデア帳。各アイデアは「温度」を持ち、放置すると指数関数的に冷めてインクの色が薄れていきます。整理やタグ付けは不要で、関心の所在が濃淡と光のにじみとして紙の上に浮かび上がります。
-                  </p>
-
-                  {/* Feature mini cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    {[
-                      { title: "温度と減衰", desc: "触れないアイデアは暖色から青灰へ薄れていく" },
-                      { title: "浮上", desc: "冷めかけたアイデアを1日1件ホームに提示" },
-                      { title: "再燃", desc: "冷えたアイデアを開くと、にじみが広がり色が戻る" },
-                    ].map((feature) => (
-                      <div key={feature.title} className="p-4 rounded-xl bg-gray-800/50 border border-gray-700/50">
-                        <p className="text-sm font-semibold text-amber-300 mb-1">{feature.title}</p>
-                        <p className="text-xs text-gray-500">{feature.desc}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    {["iOS", "React Native", "Expo", "SQLite"].map((tech) => (
-                      <Badge
-                        key={tech}
-                        className="bg-amber-500/15 text-amber-300 border border-amber-500/20 hover:bg-amber-500/25 transition-colors"
-                      >
-                        {tech}
-                      </Badge>
-                    ))}
-                  </div>
-
-                  <a
-                    href="/latent"
-                    className="inline-flex items-center gap-2 text-amber-400 hover:text-amber-300 transition-colors text-sm"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    サポートページを見る
-                  </a>
-                </CardContent>
-              </Card>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            viewport={{ once: true }}
-            className="mt-10"
-          >
-            {/* Gradient border trick */}
-            <div className="p-px rounded-2xl bg-gradient-to-br from-emerald-500/50 via-transparent to-teal-500/50">
-              <Card className="bg-gray-900 rounded-2xl border-none overflow-hidden">
-                {/* Accent bar */}
-                <div className="h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-green-600" />
-                <CardHeader className="pb-2">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-2xl font-bold text-white mb-2">Dew</CardTitle>
-                      <p className="text-gray-400 text-lg">水やりの間隔を設定させず、記録から学習する iOS アプリ</p>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <Badge className="bg-emerald-500/15 text-emerald-300 border border-emerald-500/20">
-                        TestFlight
-                      </Badge>
-                      <a href="/dew" className="p-2 rounded-full hover:bg-gray-800 transition-colors">
-                        <ArrowUpRight className="w-5 h-5 text-emerald-400" />
-                      </a>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <p className="text-gray-400 leading-relaxed">
-                    「3日ごと」のような固定間隔は、夏は水切れ、冬は根腐れを起こします。Dew
-                    は水やりの間隔をユーザーに一度も設定させません。「水をあげたら1タップ」の記録から株ごとの間隔を学習し、季節で自動補正します。ハーブ・野菜56種の図鑑から選んで登録でき、記録は端末の中にだけ保存されます。
-                  </p>
-
-                  {/* Feature mini cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    {[
-                      { title: "1タップの記録", desc: "水やりと雨をその場で。追加の質問は任意" },
-                      {
-                        title: "矛盾したときだけ学習",
-                        desc: "回答が推定とずれたときだけ間隔を動かす",
-                      },
-                      { title: "季節で自動補正", desc: "冬は伸ばし、夏は縮める。根腐れを防ぐ" },
-                    ].map((feature) => (
-                      <div key={feature.title} className="p-4 rounded-xl bg-gray-800/50 border border-gray-700/50">
-                        <p className="text-sm font-semibold text-emerald-300 mb-1">{feature.title}</p>
-                        <p className="text-xs text-gray-500">{feature.desc}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    {["iOS", "React Native", "Expo", "TypeScript"].map((tech) => (
-                      <Badge
-                        key={tech}
-                        className="bg-emerald-500/15 text-emerald-300 border border-emerald-500/20 hover:bg-emerald-500/25 transition-colors"
-                      >
-                        {tech}
-                      </Badge>
-                    ))}
-                  </div>
-
-                  <a
-                    href="/dew"
-                    className="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors text-sm"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    サポートページを見る
-                  </a>
-                </CardContent>
-              </Card>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.45 }}
-            viewport={{ once: true }}
-            className="mt-10"
-          >
-            {/* Gradient border trick */}
-            <div className="p-px rounded-2xl bg-gradient-to-br from-orange-500/50 via-transparent to-red-500/50">
-              <Card className="bg-gray-900 rounded-2xl border-none overflow-hidden">
-                {/* Accent bar */}
-                <div className="h-1 bg-gradient-to-r from-orange-500 via-red-500 to-rose-600" />
-                <CardHeader className="pb-2">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-2xl font-bold text-white mb-2">Insaporire</CardTitle>
-                      <p className="text-gray-400 text-lg">
-                        料理の試作をバージョンで重ね、違いと気づきを残す iOS アプリ
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <Badge className="bg-orange-500/15 text-orange-300 border border-orange-500/20">TestFlight</Badge>
-                      <a href="/insaporire" className="p-2 rounded-full hover:bg-gray-800 transition-colors">
-                        <ArrowUpRight className="w-5 h-5 text-orange-400" />
-                      </a>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <p className="text-gray-400 leading-relaxed">
-                    料理人が修行時代にやる「試作の記録と振り返り」のためのノート。完成したレシピを 1
-                    枚で持つのではなく、同じ料理を作り直すたびに新しいバージョンとして追記し、前回との違い・その日の条件・気づきを残します。パンや出汁のように配合が味を決める料理では、基準材料を指定すると比率の自動計算と分量の換算が使えます。記録は端末の中にだけ保存されます。
-                  </p>
-
-                  {/* Feature mini cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    {[
-                      { title: "バージョンで追記", desc: "材料・手順は履歴として残し、気づきは後から書き足す" },
-                      { title: "並べて比較", desc: "2 つのバージョンを左右に並べ、変わった箇所を強調" },
-                      { title: "比率と換算", desc: "基準材料を決めた料理だけ、比率と分量スケールを表示" },
-                    ].map((feature) => (
-                      <div key={feature.title} className="p-4 rounded-xl bg-gray-800/50 border border-gray-700/50">
-                        <p className="text-sm font-semibold text-orange-300 mb-1">{feature.title}</p>
-                        <p className="text-xs text-gray-500">{feature.desc}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    {["iOS", "React Native", "Expo", "SQLite"].map((tech) => (
-                      <Badge
-                        key={tech}
-                        className="bg-orange-500/15 text-orange-300 border border-orange-500/20 hover:bg-orange-500/25 transition-colors"
-                      >
-                        {tech}
-                      </Badge>
-                    ))}
-                  </div>
-
-                  <a
-                    href="/insaporire"
-                    className="inline-flex items-center gap-2 text-orange-400 hover:text-orange-300 transition-colors text-sm"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    サポートページを見る
-                  </a>
-                </CardContent>
-              </Card>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      <SectionSeparator />
-
-      {/* Skills */}
-      <section id="skills" className="py-24 px-4">
-        <div className="max-w-5xl mx-auto">
-          <motion.h2
-            className="text-4xl font-bold mb-16 text-center text-gradient"
-            variants={fadeInUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            Skills
-          </motion.h2>
-
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {skillCategories.map((category) => {
-              const meta = categoryMeta[category.name];
-              const IconComponent = meta.icon;
-              return (
-                <motion.div key={category.name} variants={scaleIn}>
-                  <Card className="bg-gray-900/80 border-gray-800/50 hover:bg-gray-800/60 transition-all duration-300 h-full">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg ${meta.bg} border`}>
-                          <IconComponent className={`w-4 h-4 ${meta.color}`} />
-                        </div>
-                        <span className={`text-base font-semibold ${meta.color}`}>{category.name}</span>
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex flex-wrap gap-2">
-                        {category.skills.map((skill) => (
-                          <Badge
-                            key={skill}
-                            variant="secondary"
-                            className="bg-gray-800/80 text-gray-300 border border-gray-700/50 hover:scale-105 transition-transform cursor-default"
-                          >
-                            {skill}
-                          </Badge>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </div>
-      </section>
-
-      <SectionSeparator />
-
-      {/* Contact */}
-      <section id="contact" className="py-24 px-4">
-        <div className="max-w-4xl mx-auto">
-          <motion.h2
-            className="text-4xl font-bold mb-16 text-center text-gradient"
-            variants={fadeInUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            Contact
-          </motion.h2>
-
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="space-y-8"
-          >
-            {/* Description + social */}
-            <motion.div variants={fadeInUp} className="text-center space-y-4">
-              <div className="flex items-center justify-center gap-3">
-                <div className="p-2.5 rounded-xl bg-purple-500/10">
-                  <Mail className="w-5 h-5 text-purple-400" />
-                </div>
-                <h3 className="text-xl font-semibold text-white">Get in Touch</h3>
-              </div>
-              <p className="text-gray-400 leading-relaxed max-w-lg mx-auto">
-                お仕事のご相談やご質問など、お気軽にお問い合わせください。以下のフォームまたはSNSからどうぞ。
+          <div className={`${container} relative mt-auto pb-8 pt-24 md:pb-10`}>
+            <p className="tracking-normal text-sub">{profile.role}</p>
+            <Lines
+              lines={profile.tagline}
+              delay={0.15}
+              className="display mt-4 text-[7vw] leading-[1.5] sm:text-[clamp(2.4rem,5.6vw,4.75rem)] sm:leading-[1.42]"
+            />
+            <div className="mt-10 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 border-t border-ink/15 pt-5 md:mt-14">
+              <ProfileLinks />
+              <p className="text-[13px] text-sub">
+                <span className="[@media(hover:none)]:hidden">クリック</span>
+                <span className="hidden [@media(hover:none)]:inline">タップ</span>
+                すると墨が落ちます
               </p>
-              <div className="flex gap-3 justify-center">
-                <a
-                  href="https://github.com/yuya-take"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 rounded-full border border-gray-700/50 hover:border-purple-500/50 text-gray-400 hover:text-purple-400 transition-all duration-300"
-                >
-                  <Github className="w-5 h-5" />
-                </a>
-                <a
-                  href="https://linkedin.com/in/yuya-takemasa-456763285"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 rounded-full border border-gray-700/50 hover:border-purple-500/50 text-gray-400 hover:text-purple-400 transition-all duration-300"
-                >
-                  <Linkedin className="w-5 h-5" />
-                </a>
-              </div>
-            </motion.div>
-
-            {/* Google Form embed */}
-            <motion.div variants={fadeInUp} className="flex justify-center">
-              <div className="w-full max-w-2xl rounded-2xl overflow-hidden border border-gray-800/50">
-                <iframe
-                  src={GOOGLE_FORM_URL}
-                  width="100%"
-                  height="600"
-                  className="bg-transparent"
-                  title="お問い合わせフォーム"
-                >
-                  読み込み中…
-                </iframe>
-              </div>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-gray-800/50 py-8 px-4">
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-          <p>&copy; {new Date().getFullYear()} Yuya Takemasa. All rights reserved.</p>
-          <div className="flex gap-6">
-            <a
-              href="https://github.com/yuya-take"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-gray-300 transition-colors"
-            >
-              GitHub
-            </a>
-            <a
-              href="https://linkedin.com/in/yuya-takemasa-456763285"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-gray-300 transition-colors"
-            >
-              LinkedIn
-            </a>
+            </div>
           </div>
         </div>
-      </footer>
-    </div>
+
+        <main>
+          <section id="about" aria-labelledby="about-title" className={`${container} scroll-mt-6 pt-24 md:pt-36`}>
+            <SectionTitle id="about">About</SectionTitle>
+            <div className={`${columns} mt-10 md:mt-14`}>
+              <Reveal>
+                {/* eslint-disable-next-line @next/next/no-img-element -- GitHub のアイコンをそのまま出すだけなので最適化は通さない */}
+                <img
+                  src={profile.avatar}
+                  alt={profile.name}
+                  width={200}
+                  height={200}
+                  className="h-[200px] w-[200px] bg-line object-cover"
+                />
+                <dl className="mt-8 grid grid-cols-[5em_1fr] gap-y-1">
+                  {facts.map((fact) => (
+                    <div key={fact.label} className="contents">
+                      <dt className="text-sub">{fact.label}</dt>
+                      <dd>{fact.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </Reveal>
+              <div className="max-w-[44em] space-y-10 lg:-mt-1.5">
+                {chapters.map((chapter) => (
+                  <Reveal key={chapter.title}>
+                    <h3 className="font-semibold tracking-normal">{chapter.title}</h3>
+                    <p className="mt-2">{chapter.body}</p>
+                  </Reveal>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section id="projects" aria-labelledby="projects-title" className="scroll-mt-6 pt-24 md:pt-36">
+            <div className={container}>
+              <SectionTitle id="projects">Projects</SectionTitle>
+            </div>
+            <div className="mt-10 md:mt-14">
+              {projects.map((project) => (
+                <ProjectBand key={project.slug} project={project} />
+              ))}
+            </div>
+          </section>
+
+          <section id="skills" aria-labelledby="skills-title" className={`${container} scroll-mt-6 pt-24 md:pt-36`}>
+            <SectionTitle id="skills">Skills</SectionTitle>
+            <dl className="mt-4 md:mt-8">
+              {skillGroups.map((group, i) => (
+                <Reveal key={group.name} delay={i * 0.04} className="border-t border-line first:border-t-0">
+                  <div className="grid gap-y-2 py-6 lg:grid-cols-2 lg:items-baseline lg:gap-x-20">
+                    <dt className="text-sub">{group.name}</dt>
+                    <dd className="text-lg leading-[1.7] tracking-normal md:text-xl md:leading-[1.7]">
+                      {group.skills.join(" / ")}
+                    </dd>
+                  </div>
+                </Reveal>
+              ))}
+            </dl>
+          </section>
+        </main>
+
+        <section
+          id="contact"
+          aria-labelledby="contact-title"
+          className="relative mt-24 overflow-hidden bg-ink text-white md:mt-36"
+        >
+          <div className="absolute inset-0 [mask-image:linear-gradient(to_right,transparent_10%,black_75%)]">
+            <InkCanvas line={WHITE} accent={WHITE} alpha={0.3} bands={6} seed={40} />
+          </div>
+
+          <div className={`${container} relative pb-20 pt-16 md:pb-28 md:pt-24`}>
+            <SectionTitle id="contact" className="border-white/20">
+              Contact
+            </SectionTitle>
+            <Lines
+              lines={contact.lead}
+              className="display mt-10 text-[5.6vw] leading-[1.7] sm:text-[clamp(1.6rem,3.4vw,2.75rem)] md:mt-14"
+            />
+            <Reveal delay={0.2}>
+              <p className="mt-6 text-white/70">{contact.note}</p>
+              <ProfileLinks className="mt-5" />
+              <div className="mt-10 max-w-[640px]">
+                <ContactForm src={GOOGLE_FORM_URL} />
+              </div>
+            </Reveal>
+          </div>
+
+          <div className={`${container} relative`}>
+            <footer className="flex justify-between border-t border-white/15 py-8 text-[13px] tracking-normal text-white/60">
+              <p>© {profile.name}</p>
+              <a href="#top" className="transition-colors hover:text-white">
+                ページの先頭へ
+              </a>
+            </footer>
+          </div>
+        </section>
+      </div>
+    </MotionProvider>
   );
 }
