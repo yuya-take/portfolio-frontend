@@ -34,7 +34,7 @@ export const chapters = [
   },
 ];
 
-export type ProjectSlug = "scorescreen" | "latent" | "dew" | "insaporire";
+export type ProjectSlug = "scorescreen" | "latent" | "dew" | "insaporire" | "yuya-claude-code";
 
 export type Project = {
   slug: ProjectSlug;
@@ -112,6 +112,22 @@ export const projects: Project[] = [
     status: "TestFlight",
     link: { href: "/insaporire", label: "サポートページを見る" },
     theme: { bg: "138 63 31", fg: "250 240 226", accent: "255 205 150", panel: "246 241 232" },
+  },
+  {
+    slug: "yuya-claude-code",
+    name: "yuya-claude-code",
+    tagline: "必要な pack だけをプロジェクトに入れる、Claude Code の設定集",
+    description:
+      "普段の開発で使っている Claude Code の skills・agents・rules・hooks を、用途ごとの pack にまとめて公開しています。プロジェクトのルートでコマンドを 1 つ実行すると、選んだ pack が .claude/ に展開されます。手元で変更したファイルは上書きせず、同じコマンドの再実行で配布元の最新版に更新できます。",
+    features: [
+      { title: "pack を選んで入れる", desc: "6 つの pack から選ぶ。依存する pack は自動で追加" },
+      { title: "Issue から PR まで", desc: "/dev で設計・実装・セルフレビュー、/pr で PR を作成" },
+      { title: "差分に合うレビュー", desc: "/rv が変更されたファイルの種類に合う reviewer だけを起動" },
+    ],
+    tech: ["Claude Code", "Shell", "Python", "MIT License"],
+    status: "オープンソース",
+    link: { href: "https://github.com/yuya-take/yuya-claude-code", label: "GitHub で見る" },
+    theme: { bg: "223 228 234", fg: "22 28 38", accent: "32 78 150", panel: "20 24 32" },
   },
 ];
 

@@ -82,7 +82,10 @@ function ProjectBand({ project }: { project: Project }) {
         <Reveal className="flex flex-col lg:col-span-5">
           <h3
             id={`project-${project.slug}`}
-            className="flex flex-wrap items-baseline gap-x-4 gap-y-2 text-[clamp(2.5rem,4.6vw,4rem)] font-semibold leading-none tracking-[-0.03em]"
+            className={`flex flex-wrap items-baseline gap-x-4 gap-y-2 font-semibold leading-none tracking-[-0.03em] ${
+              // 長い名前は、途中で折り返さない大きさまで下げる
+              project.name.length > 14 ? "text-[clamp(2rem,3.7vw,3.25rem)]" : "text-[clamp(2.5rem,4.6vw,4rem)]"
+            }`}
           >
             {project.name}
             {project.status && (

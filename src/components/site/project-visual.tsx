@@ -3,6 +3,7 @@
 import type { ProjectSlug } from "@/lib/site";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
+import { ClaudeCodeVisual } from "./works/claude-code-visual";
 import { DewVisual } from "./works/dew-visual";
 import { InsaporireVisual } from "./works/insaporire-visual";
 import { LatentVisual } from "./works/latent-visual";
@@ -13,6 +14,7 @@ const visuals: Record<ProjectSlug, (props: { active: boolean }) => React.ReactNo
   latent: LatentVisual,
   dew: DewVisual,
   insaporire: InsaporireVisual,
+  "yuya-claude-code": ClaudeCodeVisual,
 };
 
 /** 案件ごとのコンセプトデモ。画面に入っている間だけ動かす。 */
