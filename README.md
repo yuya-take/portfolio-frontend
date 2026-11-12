@@ -27,7 +27,7 @@ src/
 │  ├─ ink-canvas.tsx         墨流しの背景（WebGL2。クリックで墨が落ちる）
 │  ├─ reveal.tsx             見出しのせり上がりと、スクロールで現れるブロック
 │  ├─ project-visual.tsx     案件ごとのデモの切り替え
-│  ├─ works/                 各アプリのコンセプトデモ
+│  ├─ works/                 各案件のコンセプトデモ
 │  └─ contact-form.tsx       お問い合わせフォームの開閉
 └─ lib/site.ts               掲載内容（プロフィール・経歴・案件・スキル）
 ```
@@ -43,5 +43,6 @@ src/
 ## メモ
 
 - 各案件のデモは、アプリの考え方を再現したものです。中のデータ（メモの文面、配合、スコアなど）はサンプルです。
+- yuya-claude-code のデモだけは実物に合わせています。pack の依存関係と中身の数は `works/claude-code-visual.tsx` の `PACKS` に書いてあるので、配布元の pack を変えたときはここも直します。表示されるコマンドはそのまま実行できます。
 - お問い合わせは Google フォームの埋め込みです（`src/lib/site.ts` の `GOOGLE_FORM_URL`）。ボタンを押すまで読み込みません。サポートページからの `/#contact` で来たときは最初から開きます。
 - OG 画像の URL は、Vercel 以外に置く場合 `NEXT_PUBLIC_SITE_URL` の設定が必要です。
