@@ -44,11 +44,10 @@ function SectionTitle({ id, children, className }: { id: string; children: strin
   );
 }
 
-function ProjectBand({ project }: { project: Project }) {
-  const { theme, link } = project;
-  const linkClass =
+function ProjectLink({ link }: { link: NonNullable<Project["link"]> }) {
+  const className =
     "group inline-flex items-center gap-3 border border-card-fg/40 px-5 py-3 leading-normal transition-colors duration-300 hover:bg-card-fg hover:text-card-bg";
-  const linkBody = (
+  const body = (
     <>
       {link.label}
       {/* biome-ignore lint/a11y/noSvgWithoutTitle: 装飾。aria-hidden で読み上げから外している */}
@@ -64,6 +63,20 @@ function ProjectBand({ project }: { project: Project }) {
       </svg>
     </>
   );
+
+  return link.href.startsWith("http") ? (
+    <a href={link.href} target="_blank" rel="noopener noreferrer" className={className}>
+      {body}
+    </a>
+  ) : (
+    <Link href={link.href} className={className}>
+      {body}
+    </Link>
+  );
+}
+
+function ProjectBand({ project }: { project: Project }) {
+  const { theme, link } = project;
 
   return (
     <article
@@ -109,15 +122,7 @@ function ProjectBand({ project }: { project: Project }) {
           </dl>
           <div className="mt-auto flex flex-wrap items-end justify-between gap-x-6 gap-y-5 pt-10">
             <p className="text-[13px] tracking-normal text-card-fg/60">{project.tech.join(" / ")}</p>
-            {link.href.startsWith("http") ? (
-              <a href={link.href} target="_blank" rel="noopener noreferrer" className={linkClass}>
-                {linkBody}
-              </a>
-            ) : (
-              <Link href={link.href} className={linkClass}>
-                {linkBody}
-              </Link>
-            )}
+            {link && <ProjectLink link={link} />}
           </div>
         </Reveal>
         <div className="lg:col-span-7">

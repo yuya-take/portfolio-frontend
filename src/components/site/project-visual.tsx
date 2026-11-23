@@ -8,12 +8,14 @@ import { DewVisual } from "./works/dew-visual";
 import { InsaporireVisual } from "./works/insaporire-visual";
 import { LatentVisual } from "./works/latent-visual";
 import { ScoreScreenVisual } from "./works/scorescreen-visual";
+import { TriplyVisual } from "./works/triply-visual";
 
 const visuals: Record<ProjectSlug, (props: { active: boolean }) => React.ReactNode> = {
   scorescreen: ScoreScreenVisual,
   latent: LatentVisual,
   dew: DewVisual,
   insaporire: InsaporireVisual,
+  triply: TriplyVisual,
   "yuya-claude-code": ClaudeCodeVisual,
 };
 
