@@ -83,7 +83,11 @@ export default function TriplyPrivacyPage() {
               に送信されます。
             </li>
             <li>Apple: Apple でサインインと、地図の表示。</li>
-            <li>Expo: アプリの更新の配信。起動時に、更新があるかを確かめる通信を行います。</li>
+            <li>
+              Expo: アプリの更新の配信（EAS
+              Update）。起動時に、更新があるかを問い合わせます。このとき、インストールごとにランダムに作られる識別子、アプリのバージョンを表す値、OS
+              の種類が送られます。前回の起動時にアプリが異常終了していた場合は、そのエラーの内容が含まれることがあります。記録した内容は送られません。
+            </li>
           </List>
           <p>広告・アクセス解析・トラッキングのためのサービスは利用していません。</p>
         </Section>
@@ -174,7 +178,12 @@ export default function TriplyPrivacyPage() {
                 field is sent to Google.
               </li>
               <li>Apple: Sign in with Apple, and the map display.</li>
-              <li>Expo: delivery of app updates. The app checks for an update when it starts.</li>
+              <li>
+                Expo: delivery of app updates (EAS Update). The app checks for an update when it starts. This request
+                includes a random identifier generated for each installation, a value identifying the app version, and
+                the OS type. If the app crashed during its previous launch, the request may also include that error
+                message. The content you record is never sent in it.
+              </li>
             </List>
             <p>Triply uses no advertising, analytics, or tracking services.</p>
           </Section>
