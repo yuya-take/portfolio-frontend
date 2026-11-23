@@ -83,8 +83,11 @@ export const projects: Project[] = [
     ],
     tech: ["iOS", "React Native", "Expo", "SQLite"],
     status: "App Store",
-    // 国を省いた URL は Web では米国のストアに転送されるので、日本のストアを指す
-    link: { href: "https://apps.apple.com/jp/app/id6810672477", label: "App Store で見る" },
+    // 日本のストアの URL。名前の部分を省いた形（/jp/app/id…）は、ブラウザで開くとエラー画面になることがある
+    link: {
+      href: "https://apps.apple.com/jp/app/latent-%E5%86%B7%E3%82%81%E3%81%A6%E3%81%84%E3%81%8F%E3%83%A1%E3%83%A2/id6810672477",
+      label: "App Store で見る",
+    },
     subLink: { href: "/latent", label: "サポートページ" },
     theme: { bg: "236 231 222", fg: "61 56 51", accent: "164 85 30", panel: "247 244 238" },
   },
