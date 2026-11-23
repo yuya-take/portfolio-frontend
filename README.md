@@ -39,6 +39,7 @@ src/
 - 案件を足す：`projects` に 1 件追加し、`components/site/works/` にデモを作って `project-visual.tsx` に登録する
 - 案件の帯の色：`projects[].theme`
 - 公開しているページが無い案件は `link` を省く（ボタンを出さない）
+- アプリをストアに出したら：`link` をストアの URL に替え、サポートページは `subLink` に移す（ボタンの横に小さく出る）。`status` も直す
 - 全体の色と書体：`tailwind.config.ts`。Web フォントは使わず、端末に入っている書体で表示します
 
 ## メモ

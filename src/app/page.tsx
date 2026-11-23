@@ -2,7 +2,17 @@ import { ContactForm } from "@/components/site/contact-form";
 import { InkCanvas } from "@/components/site/ink-canvas";
 import { ProjectVisual } from "@/components/site/project-visual";
 import { Lines, MotionProvider, Reveal } from "@/components/site/reveal";
-import { GOOGLE_FORM_URL, type Project, chapters, contact, facts, profile, projects, skillGroups } from "@/lib/site";
+import {
+  GOOGLE_FORM_URL,
+  type Project,
+  type ProjectLink,
+  chapters,
+  contact,
+  facts,
+  profile,
+  projects,
+  skillGroups,
+} from "@/lib/site";
 import Link from "next/link";
 
 const nav = [
@@ -44,11 +54,25 @@ function SectionTitle({ id, children, className }: { id: string; children: strin
   );
 }
 
-function ProjectLink({ link }: { link: NonNullable<Project["link"]> }) {
-  const className =
-    "group inline-flex items-center gap-3 border border-card-fg/40 px-5 py-3 leading-normal transition-colors duration-300 hover:bg-card-fg hover:text-card-bg";
-  const body = (
-    <>
+/** http で始まるものは外部サイトとして別タブで開く */
+function SiteLink({ href, className, children }: { href: string; className: string; children: React.ReactNode }) {
+  return href.startsWith("http") ? (
+    <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
+      {children}
+    </a>
+  ) : (
+    <Link href={href} className={className}>
+      {children}
+    </Link>
+  );
+}
+
+function ProjectButton({ link }: { link: ProjectLink }) {
+  return (
+    <SiteLink
+      href={link.href}
+      className="group inline-flex items-center gap-3 border border-card-fg/40 px-5 py-3 leading-normal transition-colors duration-300 hover:bg-card-fg hover:text-card-bg"
+    >
       {link.label}
       {/* biome-ignore lint/a11y/noSvgWithoutTitle: 装飾。aria-hidden で読み上げから外している */}
       <svg
@@ -61,22 +85,12 @@ function ProjectLink({ link }: { link: NonNullable<Project["link"]> }) {
       >
         <path d="M0 5h12.5M8.5 1l4 4-4 4" />
       </svg>
-    </>
-  );
-
-  return link.href.startsWith("http") ? (
-    <a href={link.href} target="_blank" rel="noopener noreferrer" className={className}>
-      {body}
-    </a>
-  ) : (
-    <Link href={link.href} className={className}>
-      {body}
-    </Link>
+    </SiteLink>
   );
 }
 
 function ProjectBand({ project }: { project: Project }) {
-  const { theme, link } = project;
+  const { theme, link, subLink } = project;
 
   return (
     <article
@@ -122,7 +136,16 @@ function ProjectBand({ project }: { project: Project }) {
           </dl>
           <div className="mt-auto flex flex-wrap items-end justify-between gap-x-6 gap-y-5 pt-10">
             <p className="text-[13px] tracking-normal text-card-fg/60">{project.tech.join(" / ")}</p>
-            {link && <ProjectLink link={link} />}
+            {link && (
+              <div className="flex flex-wrap items-baseline gap-x-6 gap-y-3">
+                <ProjectButton link={link} />
+                {subLink && (
+                  <SiteLink href={subLink.href} className="link text-[13px] tracking-normal text-card-fg/75">
+                    {subLink.label}
+                  </SiteLink>
+                )}
+              </div>
+            )}
           </div>
         </Reveal>
         <div className="lg:col-span-7">

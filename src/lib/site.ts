@@ -36,6 +36,8 @@ export const chapters = [
 
 export type ProjectSlug = "scorescreen" | "latent" | "dew" | "insaporire" | "triply" | "yuya-claude-code";
 
+export type ProjectLink = { href: string; label: string };
+
 export type Project = {
   slug: ProjectSlug;
   name: string;
@@ -44,8 +46,10 @@ export type Project = {
   features: { title: string; desc: string }[];
   tech: string[];
   status?: string;
-  /** http で始まるものは外部サイトとして別タブで開く。公開しているページが無い案件は省く */
-  link?: { href: string; label: string };
+  /** ボタンで出すリンク。http で始まるものは外部サイトとして別タブで開く。公開しているページが無い案件は省く */
+  link?: ProjectLink;
+  /** ボタンの横に小さく添えるリンク。ストアに出したアプリのサポートページなど */
+  subLink?: ProjectLink;
   /** 案件ごとの配色。space separated RGB で持ち、透明度つきで使い回す。 */
   theme: { bg: string; fg: string; accent: string; panel: string };
 };
@@ -78,7 +82,10 @@ export const projects: Project[] = [
       { title: "再燃", desc: "冷えたアイデアを開くと、にじみが広がり色が戻る" },
     ],
     tech: ["iOS", "React Native", "Expo", "SQLite"],
-    link: { href: "/latent", label: "サポートページを見る" },
+    status: "App Store",
+    // 国を省いた URL は Web では米国のストアに転送されるので、日本のストアを指す
+    link: { href: "https://apps.apple.com/jp/app/id6810672477", label: "App Store で見る" },
+    subLink: { href: "/latent", label: "サポートページ" },
     theme: { bg: "236 231 222", fg: "61 56 51", accent: "164 85 30", panel: "247 244 238" },
   },
   {
