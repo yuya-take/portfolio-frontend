@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "プライバシーポリシー | Dew",
   description:
-    "Dew のプライバシーポリシー。Dew はいかなる個人情報・利用データも収集せず、すべてのデータは端末内にのみ保存されます。",
+    "Dew のプライバシーポリシー。登録した株や水やりの記録は端末内にのみ保存され、広告・解析・トラッキングのためのデータ収集は行いません。",
 };
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -26,7 +26,10 @@ export default function DewPrivacyPage() {
         <p className="mt-2 text-sm text-[#85806F]">最終更新日: 2026年11月23日</p>
 
         <Section title="データの収集について">
-          <p>Dew は、いかなる個人情報・利用データも収集しません。</p>
+          <p>
+            Dew
+            は、広告・アクセス解析・トラッキングのための個人情報や利用データを収集しません。アプリの更新の確認のために送られる情報は、下の「アプリの更新の確認」のとおりです。
+          </p>
         </Section>
         <Section title="データの保存場所">
           <p>
@@ -76,7 +79,10 @@ export default function DewPrivacyPage() {
           <p className="mt-2 text-sm text-[#85806F]">Last updated: November 23, 2026</p>
 
           <Section title="Data Collection">
-            <p>Dew does not collect any personal information or usage data.</p>
+            <p>
+              Dew does not collect personal information or usage data for advertising, analytics, or tracking. The
+              information sent when checking for app updates is described under &quot;App Update Checks&quot; below.
+            </p>
           </Section>
           <Section title="Data Storage">
             <p>
