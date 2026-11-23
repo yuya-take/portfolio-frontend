@@ -116,16 +116,17 @@ export const projects: Project[] = [
   {
     slug: "triply",
     name: "Triply",
-    tagline: "旅の日記と支出を、場所ごとにまとめて残す iOS アプリ",
+    tagline: "旅の日記と支出を、1 本のタイムラインに残す iOS アプリ",
     description:
-      "旅先で「どこで何をして、いくら使ったか」を 1 つのアプリに記録します。訪れた場所に日記と写真を残し、支出はカテゴリを選んで入力。予算に対する残りがその場で分かり、あとから地図・タイムライン・予算の 3 つの見方で振り返れます。アプリは Expo、API は AWS Lambda で動かす FastAPI、認証・データベース・写真の保存は Supabase で作っています。",
+      "旅先での出来事と使ったお金を、1 つのアプリに記録します。日記はメモと写真、支出は金額とカテゴリを入力するだけ。旅行ごとの予算に対する残りがその場で分かり、行った場所は検索して旅行の地図に残せます。アプリは Expo、API は AWS Lambda で動かす FastAPI、認証・データベース・写真の保存は Supabase で作っています。",
     features: [
-      { title: "場所ごとの日記", desc: "訪れた場所にメモと写真を残し、地図のピンから開く" },
-      { title: "予算と支出", desc: "カテゴリ別に予算を決め、残りと超過をその場で確認" },
       { title: "1 本のタイムライン", desc: "日記と支出を日ごとに並べ、種類で絞り込む" },
+      { title: "予算と支出", desc: "カテゴリ別に予算を決め、残りと超過をその場で確認" },
+      { title: "旅行の地図", desc: "行った場所を名前で検索して登録し、ピンで並べる" },
     ],
     tech: ["iOS", "React Native", "Expo", "FastAPI", "Supabase", "AWS Lambda"],
     status: "TestFlight",
+    link: { href: "/triply", label: "サポートページを見る" },
     theme: { bg: "0 80 72", fg: "240 250 247", accent: "255 193 7", panel: "244 251 248" },
   },
   {

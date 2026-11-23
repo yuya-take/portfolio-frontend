@@ -22,7 +22,7 @@ src/
 │  ├─ globals.css            ベースのスタイル
 │  ├─ opengraph-image.tsx    共有用の OG 画像（ビルド時に生成）
 │  ├─ icon.svg ほか          ファビコン類
-│  └─ latent / dew / insaporire   各アプリのサポートページとプライバシーポリシー
+│  └─ latent / dew / insaporire / triply   各アプリのサポートページとプライバシーポリシー
 ├─ components/site/
 │  ├─ ink-canvas.tsx         墨流しの背景（WebGL2。クリックで墨が落ちる）
 │  ├─ reveal.tsx             見出しのせり上がりと、スクロールで現れるブロック
@@ -44,6 +44,7 @@ src/
 ## メモ
 
 - 各案件のデモは、アプリの考え方を再現したものです。中のデータ（メモの文面、配合、スコアなど）はサンプルです。
+- Triply のプライバシーポリシー（`src/app/triply/privacy/page.tsx`）は、アプリが扱うデータと使っている外部サービスを実装に合わせて書いています。ログインの方法、保存先、外部サービス、写真の保存のしかたを変えたときは、ここも直します。
 - yuya-claude-code のデモだけは実物に合わせています。pack の依存関係と中身の数は `works/claude-code-visual.tsx` の `PACKS` に書いてあるので、配布元の pack を変えたときはここも直します。表示されるコマンドはそのまま実行できます。
 - お問い合わせは Google フォームの埋め込みです（`src/lib/site.ts` の `GOOGLE_FORM_URL`）。ボタンを押すまで読み込みません。サポートページからの `/#contact` で来たときは最初から開きます。
 - OG 画像の URL は、Vercel 以外に置く場合 `NEXT_PUBLIC_SITE_URL` の設定が必要です。
